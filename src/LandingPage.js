@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Form from "./form";
 import LoginCard from "./LoginCard";
+import Otp from "./otp";
 
 function LandingPage() {
   const [showLogin, setShowLogin] = useState(true);
@@ -31,6 +32,7 @@ function LandingPage() {
           ) : (
             <Form onLoginClick={handleLoginClick} />
           )}
+          {/* <Otp /> */}
         </div>
       </div>
     </div>
