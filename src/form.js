@@ -53,6 +53,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="department"
+              name="department"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Faculty of Engineering & Technology"
               value={department}
@@ -67,6 +68,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="subject"
+              name="subject"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Computer Science"
               value={subject}
@@ -81,6 +83,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="faculty"
+              name="faculty"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Faculty"
               value={faculty}
@@ -97,6 +100,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="firstName"
+              name="firstName"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="John"
               value={firstName}
@@ -111,6 +115,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="lastName"
+              name="lastName"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Doe"
               value={lastName}
@@ -124,6 +129,7 @@ function Form({ onLoginClick }) {
             </label>
             <select
               id="gender"
+              name="gender"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               value={gender}
               onChange={(e) => setGender(e.target.value)}
@@ -142,6 +148,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="fatherName"
+              name="fatherName"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="John Doe Sr."
               value={fatherName}
@@ -156,6 +163,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="motherName"
+              name="motherName"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Jane Doe"
               value={motherName}
@@ -171,6 +179,7 @@ function Form({ onLoginClick }) {
             </label>
             <textarea
             id="permaddress"
+            name="permaddress"
             className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="1234 Main St, Anytown, USA"
             rows="4"
@@ -186,6 +195,7 @@ function Form({ onLoginClick }) {
             </label>
             <textarea
             id="localaddress"
+            name="localaddress"
             className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="1234 Main St, Anytown, USA"
             rows="4"
@@ -202,6 +212,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="aadhar"
+              name="aadhar"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="1234 5678 9012"
               value={aadhar}
@@ -216,6 +227,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="telNumber"
+              name="telNumber"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="81XXXXXXXX"
               value={telNumber}
@@ -231,6 +243,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="mobileNumber"
+              name="mobileNumber"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="99XXXXXXXX"
               value={mobileNumber}
@@ -246,6 +259,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="state"
+              name="state"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Chandigarh"
               value={state}
@@ -261,6 +275,7 @@ function Form({ onLoginClick }) {
             <input
               type="email"
               id="email"
+              name="email"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="john.doe@example.com"
               value={email}
@@ -277,6 +292,7 @@ function Form({ onLoginClick }) {
             <input
               type="text"
               id="regNumber"
+              name="regNumber"
               className="shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="36920000501"
               value={regNumber}
