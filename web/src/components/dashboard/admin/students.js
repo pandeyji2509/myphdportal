@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Mock_Data from './MOCK_DATA.json';
+import data from '../../../data/newRegistrations.json';
 import { FaEye, FaEnvelope, FaFilePdf, FaCheck } from "react-icons/fa";
-import './styles.css'
 
 
 const Student = () => {
@@ -12,7 +11,7 @@ const Student = () => {
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
-      setSelectedItems(Mock_Data.map((item) => item.S_No));
+      setSelectedItems(data.map((item) => item.S_No));
     } else {
       setSelectedItems([]);
     }
@@ -51,26 +50,26 @@ const Student = () => {
           </div>
           <div className="ml-3">S.No</div>
         </div>
-        
+
         <div className="ml-4 w-2/12">Name</div>
         <div className="w-2/12">Department</div>
         <div className="w-1/12">Gender</div>
         <div className="w-2/12">Mobile</div>
         <div className="w-3/12">Email</div>
         <div className="w-2/12 flex items-center justify-center">
-          <button  onClick={handleEmailClick} className="email rounded-full bg-blue-500 text-white h-8 w-8 flex items-center justify-center cursor-pointer">
+          <button  onClick={handleEmailClick} className="email rounded-full bg-blue-500 text-white p-2 flex items-center justify-center cursor-pointer hover:bg-blue-600">
             <FaEnvelope className="text-lg" />
           </button>
-          <div className="rounded-full bg-red-700 text-white h-8 w-8 flex items-center justify-center cursor-pointer ml-2">
+          <div className="rounded-full bg-red-700 text-white p-2 flex items-center justify-center cursor-pointer ml-2 hover:bg-red-800">
             <FaFilePdf className="text-lg" />
           </div>
-          <div className="rounded-full bg-green-500 text-white h-8 w-8 flex items-center justify-center cursor-pointer ml-2">
-            <FaCheck className="text-lg" />
+          <div className="mx-2 rounded-3xl p-2 bg-green-500 text-white flex items-center justify-center cursor-pointer hover:bg-green-600">
+            <div>Approve</div>
+            <FaCheck className="ml-2 text-lg" />
           </div>
         </div>
       </div>
-      
-      {Mock_Data.map((item) => (
+      {data.map((item) => (
         <div className="my-2 flex bg-white shadow-sm items-center rounded-lg py-2 px-3 text-sm">
           <div className="w-1/12 flex items-center" key={item.S_No}>
             <div className="ml-1 flex items-center justify-center rounded-full h-8 w-8 hover:bg-gray-200 transition-colors">
@@ -83,7 +82,7 @@ const Student = () => {
             </div>
             <div className="ml-6">{item.S_No}</div>
           </div>
-          
+
           <div className="ml-4 w-2/12">{item.name}</div>
           <div className="w-2/12">{item.department}</div>
           <div className="w-1/12">{item.gender}</div>
@@ -102,31 +101,27 @@ const Student = () => {
     <div className="bg-white p-4 rounded-lg">
       {/* <h2 className="text-lg font-semibold mb-2">Email</h2> */}
 
-      <div className="flex mb-2">
-        <div className="mr-2">
-          <label htmlFor="dateInput">Date: </label>
-          <input type="date" id="dateInput" className="border border-gray-300 rounded-md px-2 py-1" />
-        </div>
-        <div>
-          <label htmlFor="timeInput">Time: </label>
-          <input type="time" id="timeInput" className="border border-gray-300 rounded-md px-2 py-1" />
-        </div>
+      <div className="flex mb-2 justify-center items-center">
+        <div htmlFor="dateInput" className="w-1/6 font-semibold items-center flex">Date</div>
+        <input type="date" id="dateInput" className="border w-2/6 border-gray-300 rounded-md px-2 py-1" />
+        <div htmlFor="timeInput" className="w-1/6 font-semibold justify-center items-center flex">Time</div>
+        <input type="time" id="timeInput" className="border w-2/6 border-gray-300 rounded-md px-2 py-1" />
       </div>
 
-      <div>
-        <label htmlFor="venueInput" style={{textAlign:'center'}}>Venue: </label>
-        <textarea id="venueInput" className="border border-gray-300 rounded-md px-2 py-2" style={{ width: '250px'}}></textarea>
+      <div className='flex mt-4'>
+        <div htmlFor="venueInput" className="w-1/6 font-semibold items-center flex">Venue</div>
+        <textarea id="venueInput" className="w-5/6 border border-gray-300 rounded-md px-2 py-2"></textarea>
       </div>
 
       <div className="flex justify-end mt-4">
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2"
+          className="bg-blue-600 text-white px-4 py-1 rounded-2xl shadow-md mr-2 hover:bg-blue-500"
           // onClick={sendEmail}
         >
           Send
         </button>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          className="bg-blue-600 text-white px-4 shadow-md rounded-2xl hover:bg-blue-500"
           onClick={closePopup}
         >
           Close
