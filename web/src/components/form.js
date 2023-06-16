@@ -348,7 +348,7 @@ function Form({ onLoginClick, handleSetOtp }) {
               id="email"
               name="email"
               className={`shadow appearance-none border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                error.email.length > 0
+                error.email && error.email.length > 0
               }`}
               placeholder="john.doe@example.com"
               value={formik.values.email}
@@ -356,7 +356,7 @@ function Form({ onLoginClick, handleSetOtp }) {
               required
             />
 
-            <small>{error.email.length > 0 && error.email}</small>
+            <small>{error.email && error.email.length > 0 && error.email}</small>
           </div>
         </div>
 
