@@ -1,9 +1,11 @@
 const { v4: uuid } = require("uuid");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const { generateJwt } = require("../utils/generateJwt");
 const { hashPassword, comparePassword } = require("../utils/bycrpt");
-const { sendOtpEmail } = require("../utils/mailer");
+const { sendOtpEmail, send_forget_password_email } = require("../utils/mailer");
 const User = require("../models/user");
 const { createUser, updateUser } = require("../services/user");
 const { otpModel } = require("../models/Otp");
@@ -25,6 +27,10 @@ const Signup = async (req, res) => {
 
     const hash = await hashPassword(req.body.password);
 
+    const expiryTime = "1h";
+
+    const secret = process.env.SECRET;
+
     let code = Math.floor(100000 + Math.random() * 900000);
 
     let expiry = Date.now() + 60 * 1000 * 15; //15 mins in ms
@@ -40,7 +46,7 @@ const Signup = async (req, res) => {
       });
     }
 
-    const refreshToken = await generateJwt(req.body.email, userObj._id);
+    const refreshToken = await generateJwt(req.body.email, userObj._id, expiryTime, secret);
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
@@ -49,7 +55,7 @@ const Signup = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    const accessToken = await generateJwt(req.body.email, userObj._id);
+    const accessToken = await generateJwt(req.body.email, userObj._id, expiryTime, secret);
     //Check if referred and validate code.
 
     return res.status(200).json({
@@ -112,9 +118,12 @@ const Login = async (req, res) => {
 
     //Generate Access token
 
-    const accessToken = await generateJwt(user.email, user._id);
+    const expiryTime = "1h";
+    const secret = process.env.SECRET;
 
-    const refreshToken = await generateJwt(user.email, user._id);
+    const accessToken = await generateJwt(user.email, user._id, expiryTime, secret);
+
+    const refreshToken = await generateJwt(user.email, user._id, expiryTime, secret);
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
@@ -142,45 +151,62 @@ const Login = async (req, res) => {
 const ForgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+
+    // user doesn't enter email.
     if (!email) {
       return res.send({
         status: 400,
         error: true,
-        message: "Cannot be processed",
+        message: "Please enter email.",
       });
     }
     const user = await User.findOne({
       email: email,
     });
+
+    // user email not found in database
     if (!user) {
+      return res.send({
+        status: 400,
+        error: true,
+        message:
+          "Email Address is not found in our database, please sign up to the portal.",
+      });
+    }
+
+    // if user email exists in database generate a one time link for 15mins.
+
+    if(user){
+
+      // link generating
+      const secret = process.env.SECRET + user.password;
+      const expiryTime = "1m";
+      const token = await generateJwt(user.email, user._id, expiryTime, secret);
+      const link = 'http://localhost:3000/reset-password';
+
+      // sending email
+
+      let response = await send_forget_password_email(user.email, user._id, link);
+
+      if (response.error) {
+        return res.status(500).json({
+          error: true,
+          message: "Couldn't send mail. Please try again later.",
+        });
+      };
+
+      // saving token in database
+
+      user.resetPasswordToken = token;
+      await user.save();
+
       return res.send({
         success: true,
         message:
           "If that email address is in our database, we will send you an email to reset your password",
       });
+
     }
-
-    let code = Math.floor(100000 + Math.random() * 900000);
-    let response = await sendEmail(user.email, code);
-
-    if (response.error) {
-      return res.status(500).json({
-        error: true,
-        message: "Couldn't send mail. Please try again later.",
-      });
-    }
-
-    let expiry = Date.now() + 60 * 1000 * 15;
-    user.resetPasswordToken = code;
-    user.resetPasswordExpires = expiry; // 15 minutes
-
-    await user.save();
-
-    return res.send({
-      success: true,
-      message:
-        "If that email address is in our database, we will send you an email to reset your password",
-    });
   } catch (error) {
     console.error("forgot-password-error", error);
     return res.status(500).json({
@@ -192,40 +218,44 @@ const ForgotPassword = async (req, res) => {
 
 const ResetPassword = async (req, res) => {
   try {
-    const { token, newPassword, confirmPassword } = req.body;
-    if (!token || !newPassword || !confirmPassword) {
+    const { newPassword, confirmPassword, email } = req.body;
+
+    if (!email || !newPassword || !confirmPassword) {
       return res.status(403).json({
         error: true,
         message: "Couldn't process request. Please provide all mandatory fields",
       });
     }
+
     const user = await User.findOne({
-      resetPasswordToken: req.body.token,
-      resetPasswordExpires: { $gt: Date.now() },
+      email: email
     });
-    if (!user) {
-      return res.send({
-        error: true,
-        message: "Password reset token is invalid or has expired.",
-      });
-    }
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({
-        error: true,
-        message: "Passwords didn't match",
-      });
-    }
-    const hash = await User.hashPassword(req.body.newPassword);
-    user.password = hash;
-    user.resetPasswordToken = null;
-    user.resetPasswordExpires = "";
 
-    await user.save();
-
-    return res.send({
-      success: true,
-      message: "Password has been changed",
-    });
+    const secret = process.env.SECRET + user.password;
+    jwt.verify(user.resetPasswordToken, secret, async (err, verifiedJwt) => {
+      if(err){
+        return res.send({
+          error: true,
+          message: "Password reset token is invalid or has expired.",
+        });
+      }else{
+        if (newPassword !== confirmPassword) {
+          return res.status(400).json({
+            error: true,
+            message: "Passwords didn't match",
+          });
+        }
+        const hash = await hashPassword(req.body.newPassword);
+        user.password = hash;
+        user.resetPasswordToken = null;
+    
+        await user.save();
+    
+        return res.send({
+          success: true,
+          message: "Password has been changed",
+        });
+      }});
   } catch (error) {
     console.error("reset-password-error", error);
     return res.status(500).json({
@@ -330,4 +360,6 @@ const resendOtp = async (req, res) => {
     }
   } catch (error) {}
 };
-module.exports = { Signup, Login, ForgotPassword, verifyOtp };
+
+
+module.exports = { Signup, Login, ForgotPassword, verifyOtp, ResetPassword };
