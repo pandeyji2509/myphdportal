@@ -7,6 +7,7 @@ import NavButton from '../NavButton';
 const SideBar = () => {
   const { darkMode } = useContext(DarkModeContext);
   const [activeButton, setActiveButton] = useState("");
+  const [isActive, setIsActive] = useState(false);
   const [showSubButtons, setShowSubButtons] = useState(false);
 
   const location = useLocation();
@@ -29,18 +30,18 @@ const SideBar = () => {
   };
 
   return (
-    <div className={`${darkMode ? "bg-gray-800 " : "bg-[#081A51]"} w-1/6 h-full `}>
+    <div className={`${darkMode ? "bg-gray-800 " : "bg-[#181c2c]"} w-1/6 h-full `}>
       <div className="flex items-center px-4 pl-6 h-16">
         <div className="bg-[url('../public/pu-logodark.png')] w-8 h-8 mr-2 bg-contain bg-center"></div>
         <div className={`${darkMode ? "text-white" : "text-white"} text-lg font-bold`}> Panjab University </div>
       </div>
 
-      <ul className={`flex-1 text-md overflow-y-auto ${darkMode ? "text-gray-200" : "text-white"} p-4 pr-0`}>
+      <ul className={`flex-1 ${(isActive)? "bg-white" : ""} text-md overflow-y-auto ${darkMode ? "text-gray-200" : "text-white"} p-4 pr-0`}>
         <NavButton
           text="Home"
           to="/dashboard"
           icon={<FaHome className="mr-4" />}
-          onClick={() => handleButtonClick("Home")}
+          onClick={() => {handleButtonClick("Home") && setIsActive(true)}}
           active={currentPath === "/dashboard"}
         />
         <NavButton

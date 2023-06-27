@@ -2,7 +2,7 @@ const ResetPass = () => {
 
     return (  
         <div className="w-full mx-auto mt-16">
-            <div className="bg-white rounded px-20 pt-12">
+            <div className="bg-white rounded px-20 py-10">
                 <div className="font-bold text-center text-3xl">Reset Password</div>
                 <div className="mt-10 text-center text-lg text-gray-600">Enter the email associated with your account and we'll send an email with instructions to reset your password.</div>
                 <div className="my-10">

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import reducer from "./reducer";
 import { deleteCookie, getCookie } from "../utils/Cookie";
@@ -15,7 +15,7 @@ const defaultState = {
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, defaultState);
-
+  const [approvedUsers, setApprovedUsers] = useState([]);
   const isUserAuthenticated = () => !!state.accessToken;
 
   const createSession = (payload) => {
@@ -91,10 +91,13 @@ const AppProvider = ({ children }) => {
         state,
         logout,
         handleVerified,
+        approvedUsers,
+        setApprovedUsers,
       }}
     >
       {children}
     </AppContext.Provider>
+
   );
 };
 
