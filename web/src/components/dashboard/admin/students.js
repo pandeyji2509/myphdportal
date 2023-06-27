@@ -1,29 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import data from '../../../data/newRegistrations.json';
 import { FaEye, FaEnvelope, FaFilePdf, FaCheck } from "react-icons/fa";
-
+import { jsPDF } from "jspdf";
+import { useAppContext } from '../../../context/context'
 
 const Student = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [showPopup, setShowPopup] = useState(false); // Added state for popup visibility
+  const { approvedUsers, setApprovedUsers } = useAppContext();
+  console.log(approvedUsers);
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
-      setSelectedItems(data.map((item) => item.S_No));
+      setSelectedItems((prevItems) => data.map((item) => item.S_No));
     } else {
       setSelectedItems([]);
     }
+    console.log(selectedItems);
+  };
+  const toggleSelectItem = (itemId) => {
+    setSelectedItems((prevItems) => {
+      if (prevItems.includes(itemId)) {
+        return prevItems.filter((item) => item !== itemId);
+      } else {
+        return [...prevItems, itemId];
+      }
+    });
   };
 
-  const toggleSelectItem = (itemId) => {
-    if (selectedItems.includes(itemId)) {
-      setSelectedItems(selectedItems.filter((item) => item !== itemId));
-    } else {
-      setSelectedItems([...selectedItems, itemId]);
-    }
-  };
+  useEffect(() => {
+    console.log(selectedItems);
+  }, [selectedItems]);
 
   const isItemSelected = (itemId) => {
     return selectedItems.includes(itemId);
@@ -34,6 +43,34 @@ const Student = () => {
 
   const closePopup = () => {
     setShowPopup(false);
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const filteredData = data.filter((item) =>
+      selectedItems.includes(item.S_No)
+    );
+    filteredData.forEach((item, index) => {
+      doc.text(10, 10, `Item ${item.S_No}`);
+      doc.text(10, 20, `Name: ${item.name}`);
+      doc.text(10, 30, `Department: ${item.department}`);
+      doc.text(10, 40, `Gender: ${item.gender}`);
+      doc.text(10, 50, `Contact: ${item.contact}`);
+      doc.text(10, 60, `Email: ${item.Email}`);
+
+      if (index !== filteredData.length - 1) {
+        doc.addPage();
+      }
+    });
+
+    doc.save("Student_Data.pdf");
+  };
+
+  const ApproveUser = () => {
+    const filteredData = data.filter((item) =>
+      selectedItems.includes(item.S_No)
+    );
+    setApprovedUsers(filteredData);
   };
 
   return (
@@ -57,16 +94,25 @@ const Student = () => {
         <div className="w-2/12">Mobile</div>
         <div className="w-3/12">Email</div>
         <div className="w-2/12 flex items-center justify-center">
-          <button  onClick={handleEmailClick} className="email rounded-full bg-blue-500 text-white p-2 flex items-center justify-center cursor-pointer hover:bg-blue-600">
+          <button  
+            onClick={handleEmailClick} 
+            className="email rounded-full bg-blue-500 text-white p-2 flex items-center justify-center cursor-pointer hover:bg-blue-600"
+          >
             <FaEnvelope className="text-lg" />
           </button>
-          <div className="rounded-full bg-red-700 text-white p-2 flex items-center justify-center cursor-pointer ml-2 hover:bg-red-800">
+          <button  
+            onClick={generatePDF}
+            className="rounded-full bg-red-700 text-white p-2 flex items-center justify-center cursor-pointer ml-2 hover:bg-red-800"
+          >
             <FaFilePdf className="text-lg" />
-          </div>
-          <div className="mx-2 rounded-3xl p-2 bg-green-500 text-white flex items-center justify-center cursor-pointer hover:bg-green-600">
+          </button>
+          <button  
+            onClick={ApproveUser}
+            className="mx-2 rounded-3xl p-2 bg-green-500 text-white flex items-center justify-center cursor-pointer hover:bg-green-600"
+          >
             <div>Approve</div>
             <FaCheck className="ml-2 text-lg" />
-          </div>
+          </button>
         </div>
       </div>
       {data.map((item) => (

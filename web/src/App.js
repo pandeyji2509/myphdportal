@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import NewLandingPage from "./pages/NewLandingPage";
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard/*" element={<AdminDashboard />} />
+          <Route path="/newlanding/*" element={<NewLandingPage />} />
         </Routes>
       </BrowserRouter>
     </div>

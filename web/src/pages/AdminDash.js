@@ -34,7 +34,7 @@ function AdminDash() {
   const currentPath = location.pathname;
 
   return (
-    <div className={`flex h-screen ${darkMode ? "bg-gray-900" : "bg-[#F8F9FF]"}`}>
+    <div className={`flex font-["IBM_Plex_Sans"] h-screen ${darkMode ? "bg-gray-900" : "bg-[#F8F9FF]"}`}>
       <SideBar currentPath={currentPath} />
 
       <div className="flex-1 flex flex-col">
