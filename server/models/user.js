@@ -19,6 +19,7 @@ const userSchema = new Schema(
     telNumber: { type: Number },
     state: { type: String },
     regNumber: { type: String },
+    resetPasswordToken: { type: String },
   },
   {
     timestamps: {

@@ -62,4 +62,44 @@ const sendOtpEmail = async (email, _id) => {
   }
 };
 
-module.exports = { sendOtpEmail };
+const send_forget_password_email = async (email, _id, link) => {
+  const transporter = nodemailer.createTransport({
+    // host: "smtp-mail.outlook.com", // hostname
+    service: "gmail",
+    auth: {
+      user: process.env.AUTH_USER,
+      pass: process.env.AUTH_PASS,
+    },
+  });
+
+  try {
+    var body_html = `<!DOCTYPE> 
+    <html>
+      <body>
+        <p><a href=${link}>Click here </a>to reset your password</p>
+      </body>
+    </html>`;
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER, // sender address
+      to: email, // list of receivers
+      subject: "Reset your password", // Subject
+      html: body_html,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return {
+      status: "success",
+      message: "Forget password email sent",
+      data: {
+        userId: _id,
+        email,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = { sendOtpEmail, send_forget_password_email };

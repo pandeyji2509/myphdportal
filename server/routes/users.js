@@ -3,15 +3,17 @@ const router = express.Router();
 
 const { validateToken } = require("../middlewares/validateToken");
 
-const { Signup, Login, ForgotPassword, verifyOtp } = require("../controller/user");
+const { Signup, Login, ForgotPassword, verifyOtp, ResetPassword } = require("../controller/user");
 
 router.post("/signup", Signup);
 
 router.post("/login", Login);
 
-router.patch("/forgot", ForgotPassword);
+router.post("/forgot-password", ForgotPassword);
 
 router.post("/verifyOtp", verifyOtp);
+
+router.post("/reset-password", ResetPassword);
 
 // router.patch("/reset",  AuthController.ResetPassword);
 
