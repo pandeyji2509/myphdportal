@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import FileUploadComponent from './FileUploadComponent';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useAppContext } from '../../context/context';
+import axios from 'axios';
+import { faculties, departmentOptions, stateOptions, masterDegreeOptions, eligibilityTestOptions, masterYearOptions, genderOptions} from './formConstants';
 
-function WriteField({fields, formData, handleChange, keyStyle, labelStyle, inputStyle}) {
-
+function WriteField({ fields, keyStyle, labelStyle, inputStyle, formik }) {
   return (
     <>
       {fields.map((field) => (
@@ -9,84 +14,141 @@ function WriteField({fields, formData, handleChange, keyStyle, labelStyle, input
           <label htmlFor={field.name} className={`text-gray-700 font-bold ${labelStyle} mr-4 items-center`}>
             {field.label}
           </label>
-          <input
-            type="text"
-            id={field.name}
-            name={field.name}
-            className={`shadow appearance-none border rounded ${inputStyle} py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-            placeholder={field.placeholder}
-            value={formData[field.name]}
-            onChange={handleChange}
-            required
-          />
+          {field.type === 'select' ? (
+            <select
+              id={field.name}
+              name={field.name}
+              className={`shadow appearance-none border rounded ${inputStyle} py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+              value={formik.values[field.name]}
+              onChange={formik.handleChange}
+              required
+            >
+              <option value="">Select {field.label}</option>
+              {field.options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type={field.type}
+              id={field.name}
+              name={field.name}
+              className={`shadow appearance-none border rounded ${inputStyle} py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+              placeholder={field.placeholder}
+              value={formik.values[field.name]}
+              onChange={formik.handleChange}
+              required
+            />
+          )}
         </div>
       ))}
     </>
   );
 }
 
-function Form({ onLoginClick }) {
-  const [formData, setFormData] = useState({
-    department: '',
-    subject: '',
-    faculty: '',
-    firstName: '',
-    lastName: '',
-    gender: '',
-    fatherName: '',
-    motherName: '',
-    mobileNumber: '',
-    permaddress: '',
-    localaddress: '',
-    aadhar: '',
-    telNumber: '',
-    state: '',
+function Form() {
+  const { createSession } = useAppContext();
+
+  const [error, setError] = useState({
     email: '',
-    regNumber: '',
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // const registerUser = async (body) => {
+  //   try {
+  //     console.log(process.env.REACT_APP_SERVER_ENDPOINT);
+  //     const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/signup`, body);
+  //     console.log(res);
+  //     if (res.status === 200) {
+  //       createSession({ accessToken: res.data.accessToken, _id: res.data.userObj._id });
+  //       handleSetOtp(true);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     setError((prevstate) => {
+  //       return { ...prevstate, email: error.response.data.message };
+  //     });
+  //   }
+  // };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-  };
+  const formik = useFormik({
+    initialValues: {
+      faculty: '',
+      department: '',
+      subject: '',
+      firstName: '',
+      lastName: '',
+      gender: '',
+      fatherName: '',
+      motherName: '',
+      mobileNumber: '',
+      permaddress: '',
+      localaddress: '',
+      aadhar: '',
+      telNumber: '',
+      state: '',
+      email: '',
+      masterDegree: '',
+      masterYear: '',
+      masterUniversity: '',
+      masterDivision: '',
+      masterMarks: '',
+      masterPercent: '',
+      masterSubject: '',
+      masterRollNo: '',
+      eligibilityTest: '',
+      regNumber: '',
+      researchDep: '',
+      employed: '',
+      employerDetails: '',
+    },
+    onSubmit: () => {
+      console.log('submitting', formik.values);
+      // console.log(formik.errors);
+      // registerUser(formik.values);
+    },
+    validationSchema: Yup.object().shape({
+      email: Yup.string().email('Invalid email address').required('Required'),
+    }),
+  });
 
   const formFields = [
-    { label: 'Department', name: 'department', placeholder: 'Faculty of Engineering & Technology' },
-    { label: 'Subject', name: 'subject', placeholder: 'Computer Science' },
-    { label: 'Faculty', name: 'faculty', placeholder: 'Faculty' },
-    { label: 'First Name', name: 'firstName', placeholder: 'John' },
-    { label: 'Last Name', name: 'lastName', placeholder: 'Doe' },
-    { label: 'Gender', name: 'gender', placeholder: 'Male/Female' },
-    { label: 'Father\'s Name', name: 'fatherName', placeholder: 'John Doe Sr.' },
-    { label: 'Mother\'s Name', name: 'motherName', placeholder: 'Jane Doe' },
-    { label: 'Mobile Number', name: 'mobileNumber', placeholder: '1234567890' },
-    { label: 'Permanent Address', name: 'permaddress', placeholder: '123 Main St' },
-    { label: 'Local Address', name: 'localaddress', placeholder: '456 Elm St' },
-    { label: 'Aadhar Number', name: 'aadhar', placeholder: '1234-5678-9012' },
-    { label: 'Telephone', name: 'telNumber', placeholder: '9876543210' },
-    { label: 'State', name: 'state', placeholder: 'California' },
-    { label: 'Email', name: 'email', placeholder: 'example@example.com' },
-    { label: "Master's Degree", name: 'masters', placeholder: 'M.A.' },
-    { label: 'Year', name: 'year', placeholder: '2023' },
-    { label: 'University', name: 'university', placeholder: 'University Name' },
-    { label: 'Division', name: 'division', placeholder: 'First' },
-    { label: 'Marks Obtained', name: 'marksobtained', placeholder: '100' },
-    { label: 'Percentage', name: 'percentage', placeholder: '100%' },
-    { label: 'Subject', name: 'masterSubject', placeholder: 'Subject' },
-    { label: 'Roll No', name: 'masterRollNo', placeholder: '123456' },
-    { label: 'Eligibility Test', name: 'eligibilityTest', placeholder: 'GATE' },
-    { label: 'Registration No. (if any) of Panjab University', name: 'regNum', placeholder: '36925000120'},
-    { label: 'Department where research work will be carried out', name: 'researchDep', placeholder: 'Department'},
-    { label: 'Whether employed?', name: 'employed', placeholder: 'NO' },
-    { label: 'If yes, name and address of the Instruction /Organization', name: 'employerDetails', placeholder: 'Employer Details'},
+    { label: 'Faculty', name: 'faculty', placeholder: 'Select Faculty', type: 'select', options: faculties },
+    {
+      label: 'Department',
+      name: 'department',
+      placeholder: 'Select Department',
+      type: 'select',
+      options: departmentOptions[formik.values.faculty] || [],
+      disabled: !formik.values.faculty,
+    },
+    { label: 'Subject', name: 'subject', placeholder: 'Subject', type: 'text' },
+    { label: 'First Name', name: 'firstName', placeholder: 'First Name', type: 'text' },
+    { label: 'Last Name', name: 'lastName', placeholder: 'Last Name', type: 'text' },
+    { label: 'Gender', name: 'gender', placeholder: 'Select Gender', type: 'select', options: genderOptions },
+    { label: "Father's Name", name: 'fatherName', placeholder: "Father's Name", type: 'text' },
+    { label: "Mother's Name", name: 'motherName', placeholder: "Mother's Name", type: 'text' },
+    { label: 'Mobile Number', name: 'mobileNumber', placeholder: 'Mobile Number', type: 'text' },
+    { label: 'Permanent Address', name: 'permaddress', placeholder: 'Permanent Address', type: 'text' },
+    { label: 'Local Address', name: 'localaddress', placeholder: 'Local Address', type: 'text' },
+    { label: 'Aadhar Number', name: 'aadhar', placeholder: 'Aadhar Number', type: 'text' },
+    { label: 'Telephone', name: 'telNumber', placeholder: 'Telephone', type: 'text' },
+    { label: 'State', name: 'state', placeholder: 'Select State', type: 'select', options: stateOptions },
+    { label: 'Email', name: 'email', placeholder: 'Email', type: 'text' },
+    { label: "Master's Degree", name: 'masterDegree', placeholder: "Select", type: 'select', options: masterDegreeOptions },
+    { label: 'Year', name: 'masterYear', placeholder: 'Select', type: 'select', options: masterYearOptions },
+    { label: 'University', name: 'masterUniversity', placeholder: 'University', type: 'text' },
+    { label: 'Division', name: 'masterDivision', placeholder: 'Division', type: 'text' },
+    { label: 'Marks Obtained', name: 'masterMarks', placeholder: 'Marks Obtained', type: 'text' },
+    { label: 'Percentage', name: 'masterPercent', placeholder: 'Percentage', type: 'text' },
+    { label: 'Subject', name: 'masterSubject', placeholder: 'Subject', type: 'text' },
+    { label: 'Roll No', name: 'masterRollNo', placeholder: 'Roll No', type: 'text' },
+    { label: 'Eligibility Test', name: 'eligibilityTest', placeholder: 'Select', type: 'select', options: eligibilityTestOptions },
+    { label: 'Registration No. (if any) of Panjab University', name: 'regNumber', placeholder: 'Registration No.', type: 'text' },
+    { label: 'Department where research work will be carried out', name: 'researchDep', placeholder: 'Select Research Department', type: 'select', options: departmentOptions[formik.values.faculty] || [] },
+    { label: 'Whether employed?', name: 'employed', placeholder: 'Select', type: 'select', options: ['Yes', 'No'] },
+    { label: 'If yes, name and address of the Instruction/Organization', name: 'employerDetails', placeholder: 'Employer Details', type: 'text', disabled: formik.values.employed === 'No' },
     // Add more fields as needed
   ];
 
@@ -100,11 +162,11 @@ function Form({ onLoginClick }) {
         <div className="border-b border-gray-300 mt-2 mb-8 mx-12"></div>
       </div>
 
-      <form onSubmit={handleSubmit} className="">
-        <div className="bg-white rounded-lg w-full p-8 shadow-md">
-          <div className="flex">
-            <WriteField fields={formFields.slice(0,3)} formData={formData} handleChange = {handleChange} labelStyle={"w-fit"} keyStyle={"w-1/3 justify-end"} inputStyle={"w-3/4"}/>
-          </div>
+      <form onSubmit={formik.handleSubmit} className="">
+        {/* Form fields */}
+        <div className="bg-white rounded-lg w-full p-8 shadow-md flex">
+          <WriteField fields={formFields.slice(0, 1)} labelStyle="w-fit" keyStyle="w-1/3 justify-start" inputStyle="w-3/4" formik={formik}/>
+          <WriteField fields={formFields.slice(1, 3)} labelStyle="w-fit" keyStyle="w-1/3 justify-end" inputStyle="w-3/4" formik={formik}/>
         </div>
         <div className="flex mt-4 text-white font-bold">
           <div className="w-1/2 mr-2 bg-blue-400 rounded-md p-2 pl-8">PERSONAL INFORMATION</div>
@@ -112,13 +174,10 @@ function Form({ onLoginClick }) {
         </div>
         <div className="flex mt-4">
           <div className="bg-white rounded-lg w-1/2 mr-2 p-8 shadow-md">
-            {/* <div className="text-white font-bold bg-blue-400 rounded-md p-2 mb-8">
-              PERSONAL DETAILS
-            </div> */}
-            <WriteField fields={formFields.slice(3,9)} formData={formData} handleChange = {handleChange} labelStyle={"w-2/6"} keyStyle={"mb-2"} inputStyle={"w-4/6"}/>
+            <WriteField fields={formFields.slice(3, 9)} labelStyle="w-2/6" keyStyle="mb-2" inputStyle="w-4/6" formik={formik}/>
           </div>
           <div className="bg-white rounded-lg w-1/2 ml-2 p-8 shadow-md">
-            <WriteField fields={formFields.slice(9,15)} formData={formData} handleChange = {handleChange} labelStyle={"w-2/6"} keyStyle={"mb-2"} inputStyle={"w-4/6"}/>
+            <WriteField fields={formFields.slice(9, 15)} labelStyle="w-2/6" keyStyle="mb-2" inputStyle="w-4/6" formik={formik} />
           </div>
         </div>
         <div className="flex mt-4 text-white font-bold">
@@ -127,28 +186,27 @@ function Form({ onLoginClick }) {
         </div>
         <div className="flex mt-4">
           <div className="bg-white rounded-lg w-1/2 mr-2 p-8 shadow-md">
-            {/* <div className="text-white font-bold bg-blue-400 rounded-md p-2 mb-8">
-              PERSONAL DETAILS
-            </div> */}
-            <WriteField fields={formFields.slice(15,23)} formData={formData} handleChange = {handleChange} labelStyle={"w-2/6"} keyStyle={"mb-2"} inputStyle={"w-4/6"}/>
+            <WriteField fields={formFields.slice(15, 23)} labelStyle="w-2/6" keyStyle="mb-2" inputStyle="w-4/6" formik={formik}/>
           </div>
           <div className="bg-white rounded-lg w-1/2 ml-2 p-8 shadow-md">
-            <WriteField fields={formFields.slice(23,24)} formData={formData} handleChange = {handleChange} labelStyle={"w-2/6"} keyStyle={"mb-2"} inputStyle={"w-4/6"}/>
-            <WriteField fields={formFields.slice(24,28)} formData={formData} handleChange = {handleChange} labelStyle={"w-3/5"} keyStyle={"mb-2"} inputStyle={"w-2/5"}/>
+            <WriteField fields={formFields.slice(23, 29)} labelStyle="w-2/6" keyStyle="mb-2" inputStyle="w-4/6" formik={formik}/>
           </div>
+        </div>
+        <div className="flex mt-4 text-white font-bold bg-blue-400 rounded-md p-2 pl-8">DOCUMENTS UPLOAD</div>
+        <div className="mt-4 bg-white rounded-lg w-full px-8 py-4 shadow-md overflow-hidden">
+          <FileUploadComponent />
         </div>
         <div className="flex justify-center">
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white text-lg font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-8 tracking-widest"
-          >
-            SUBMIT
-          </button>
-        </div>
-      </form>
-    </>
-    
-  );
-}
-
-export default Form;
+            >
+              SUBMIT
+            </button>
+          </div>
+        </form>
+      </>
+    );
+  }
+  
+  export default Form;
