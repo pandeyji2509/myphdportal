@@ -102,4 +102,49 @@ const send_forget_password_email = async (email, _id, link) => {
   }
 }
 
+const send_date_time = async (email, _id) => {
+  const { date, time } = req.body;
+  const dateTime = `${date} ${time}`;
+  const scheduledTime = new Date(dateTime);
+  const formattedScheduledTime = scheduledTime.toLocaleString(); // Eg : '15/7/2023, 2:30:00 pm'
+
+  const transporter = nodemailer.createTransport({
+    // host: "smtp-mail.outlook.com", // hostname
+    service: "gmail",
+    auth: {
+      user: process.env.AUTH_USER,
+      pass: process.env.AUTH_PASS,
+    },
+  });
+
+  try {
+    var body_html = `<!DOCTYPE> 
+    <html>
+      <body>
+        <p>Scheduled time is : </p> <b>${formattedScheduledTime}</b> 
+      </body>
+    </html>`; // Message is to be edited accordingly
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER, // sender address
+      to: email, // list of receivers
+      subject: "Date and time", // Subject
+      html: body_html,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return {
+      status: "success",
+      message: "Email sent successfully",
+      data: {
+        userId: _id,
+        email,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = { sendOtpEmail, send_forget_password_email };
