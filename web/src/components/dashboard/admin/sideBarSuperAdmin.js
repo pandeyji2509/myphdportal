@@ -4,29 +4,14 @@ import { FaHome, FaMoneyBillWave, FaEnvelope, FaFileAlt, FaUserAlt} from "react-
 import { useLocation } from 'react-router-dom';
 import NavButton from '../NavButton';
 
-const SideBar = () => {
+const SideBarSuperAdmin = () => {
   const { darkMode } = useContext(DarkModeContext);
   const [activeButton, setActiveButton] = useState("");
-  const [showSubButtons, setShowSubButtons] = useState(false);
 
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const handleButtonClick = (text) => {
-    if (text === "Registrations") {
-      setActiveButton(activeButton === "New Registrations" ? "" : "New Registrations");
-      setShowSubButtons(!showSubButtons);
-    } else {
-      setActiveButton(text);
-      setShowSubButtons(false);
-    }
-  };
-  
-  
-
-  const handleSubButtonClick = (text) => {
-    setActiveButton(text);
-  };
+  const handleButtonClick = (text) => setActiveButton(text);
 
   return (
     <div className={`${darkMode ? "bg-gray-800 " : "bg-[#181c2c]"} w-1/6 h-full `}>
@@ -43,31 +28,13 @@ const SideBar = () => {
           onClick={() => {handleButtonClick("Home")}}
           active={currentPath === "/admin"}
         />
-        <NavButton
-          text="Registrations"
-          to="/admin/students"
-          icon={<FaUserAlt className="mr-4" />}
-          onClick={() => handleButtonClick("Registrations")}
-          active={currentPath === "/admin/students" && (activeButton === "Registrations")}
-
-          showSubButtons={showSubButtons}
+         <NavButton
+          text="Add Department"
+          to="/admin/AddDepartment"
+          icon={<FaFileAlt className="mr-4" />}
+          onClick={() => handleButtonClick("Add Department")}
+          active={currentPath === "/admin/AddDepartment"}
         />
-        {showSubButtons && (
-          <div className="pl-8 text-sm">
-            <NavButton
-              text="New Registrations"
-              to="/admin/students"
-              onClick={() => handleSubButtonClick("New Registrations")}
-              active={currentPath === "/admin/students" && activeButton === "New Registrations"}
-            />
-            <NavButton
-              text="Approved Students"
-              to="/admin/approved"
-              onClick={() => handleSubButtonClick("Approved Students")}
-              active={currentPath === "/admin/approved" && activeButton === "Approved Students"}
-            />
-          </div>
-        )}
         <NavButton
           text="Fee Portal"
           to="/admin/FeePortal"
@@ -89,9 +56,10 @@ const SideBar = () => {
           onClick={() => handleButtonClick("Profile")}
           active={currentPath === "/admin/Profile"}
         />
+        
       </ul>
     </div>
   );
 }
 
-export default SideBar;
+export default SideBarSuperAdmin;

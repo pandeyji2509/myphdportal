@@ -18,3 +18,7 @@ code {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  font-family: "IBM Plex Sans";
+}

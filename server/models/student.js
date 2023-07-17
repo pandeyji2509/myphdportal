@@ -1,0 +1,41 @@
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+
+const studentSchema = new Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    isApproved: {type: Boolean, default: false},
+    firstName: { type: String },
+    lastName: { type: String },
+    faculty: { type: String },
+    department: { type: String },
+    subject: { type: String },
+    gender: { type: String },
+    fatherName: { type: String },
+    motherName: { type: String },
+    mobileNumber: { type: String },
+    permaddress: { type: String },
+    localaddress: { type: String },
+    aadhar: { type: String },
+    telNumber: { type: String },
+    state: { type: String },
+    masterDegree: { type: String },
+    masterYear: { type: String },
+    masterUniversity: { type: String },
+    masterDivision: { type: String },
+    masterMarks: { type: String },
+    masterPercent: { type: String },
+    masterSubject: { type: String },
+    masterRollNo: { type: String },
+    eligibilityTest: { type: String },
+    regNumber: { type: String },
+    researchDep: { type: String },
+    employed: { type: Boolean },
+    employerDetails: { type: String },
+  },
+  { timestamps: true }
+);
+
+const Student = mongoose.model('Student', studentSchema);
+module.exports = Student;

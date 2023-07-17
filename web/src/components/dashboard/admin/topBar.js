@@ -1,11 +1,24 @@
 import React, { useContext, useState } from 'react';
-import { DarkModeContext } from '../../../context/DarkModeContext';
+import {DarkModeContext} from '../../../context/DarkModeContext';
 import { FaSearch, FaUser, FaMoon, FaSun} from "react-icons/fa";
+import {message} from 'antd';
+import {  useNavigate } from "react-router-dom";
+import { useAppContext } from '../../../context/context';
+import {useDispatch} from 'react-redux';
+import { setUser } from '../../../redux/features/userSlice';
 
 const TopBar = () => {
-
+    const dispatchUser = useDispatch();
+    const {logout} = useAppContext();
     const { darkMode, toggleDarkMode } = useContext(DarkModeContext);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        logout();
+        dispatchUser(setUser(null));
+        message.success("Logout Successfully");
+        navigate("/");
+      };
 
     return ( 
         <div className={`flex w-full items-center border-b-2 py-4 h-16 ${darkMode ? "bg-gray-800 border-gray-700" : "bg-white  border-gray-200"}`}>
@@ -35,9 +48,9 @@ const TopBar = () => {
                             <a href="/" className={`block px-4 py-2 ${darkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"} `}>
                             Settings
                             </a>
-                            <a href="/" className={`block px-4 py-2 ${darkMode ? "hover:bg-gray-600 hover:rounded-b-lg" : "hover:bg-gray-100"} `}>
+                            <div className={`block cursor-pointer px-4 py-2 ${darkMode ? "hover:bg-gray-600 hover:rounded-b-lg" : "hover:bg-gray-100"} `} onClick={handleLogout}>
                             Logout
-                            </a>
+                            </div>
                         </div>
                         )}
                     </div>
