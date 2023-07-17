@@ -4,7 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import { useSelector } from 'react-redux';
 import ProtectAdminRoute from "./components/protectAdminRoute";
 import ProtectStudentRoute from "./components/protectStudentRoute";
-
+import StudentDashboard from "./pages/dashboard/student/StudentDashboard";
 function App() {
   return (
     <div className="App">
@@ -18,7 +18,7 @@ function App() {
           } />
           <Route path="/student/*" element={
               <ProtectStudentRoute>
-                <AdminDashboard />
+                <StudentDashboard />
               </ ProtectStudentRoute>
           } />
         </Routes>

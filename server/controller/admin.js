@@ -124,9 +124,9 @@ const Login = async (req, res) => {
     const expiryTime = "1h";
     const secret = process.env.JWT_SECRET;
 
-    const accessToken = await generateJwt(user.username, user._id, expiryTime, secret);
+    const accessToken = await generateJwt(user.email, user._id, expiryTime, secret);
 
-    const refreshToken = await generateJwt(user.username, user._id, expiryTime, secret);
+    const refreshToken = await generateJwt(user.email, user._id, expiryTime, secret);
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,

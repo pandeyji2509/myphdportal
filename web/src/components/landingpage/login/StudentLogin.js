@@ -1,8 +1,47 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {Button} from "@material-tailwind/react";
 import { MdAdminPanelSettings } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../../context/context";
+import {message} from 'antd';
+import axios from "axios";
 
 function StudentLogin({ onAdminClick }) {
+  const { createSession } = useAppContext();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/student/login`,
+        {
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        createSession({ accessToken: res.data.accessToken, _id: res.data.user._id });
+        message.success("Log In Successful!");
+        console.log("access", res.data.accessToken);
+        return navigate("/student");
+      }
+      else {
+        message.error(res.data.message);
+      }
+
+    } catch (error) {
+        message.error("Something went wrong");
+        console.log(error);
+    }
+  };
+
   return (
     <div className=" font-['IBM_Plex_Sans'] w-full  mx-auto">
 
@@ -16,15 +55,16 @@ function StudentLogin({ onAdminClick }) {
       <div className="rounded-2xl bg-[#f8f4fc]  p-6">
 
         <div className="mb-4">
-          <label className="block font-bold text-sm mb-2" htmlFor="username">
-            Username
+          <label className="block font-bold text-sm mb-2" htmlFor="email">
+            Email ID
           </label>
           <input
             className="bg-white shadow-sm h-12 rounded w-full py-2 px-3 text-gray-600 focus:outline-none focus:shadow-outline"
-            id="username"
-            name="username"
-            type="text"
-            placeholder="Enter your username"
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            ref={emailRef}
           />
         </div>
         <div className="mb-8">
@@ -37,6 +77,7 @@ function StudentLogin({ onAdminClick }) {
             name="password"
             type="password"
             placeholder="Enter your password"
+            ref={passwordRef}
           />
         </div>
         <div className="flex items-center justify-between">
@@ -51,7 +92,7 @@ function StudentLogin({ onAdminClick }) {
          
         </div>
         <div className="mt-8">
-          <Button className='w-full text-md hover:bg-blue-600'>LOG IN</Button>
+          <Button className='w-full text-md hover:bg-blue-600' onClick={handleSubmit}>LOG IN</Button>
         </div>
        
       </div> 

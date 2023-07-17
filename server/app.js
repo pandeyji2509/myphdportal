@@ -5,7 +5,9 @@ require("dotenv").config();
 const studentRoutes = require("./routes/student");
 const adminRoutes = require("./routes/admin");
 const Admin = require("./models/admin");
+const Student = require("./models/student");
 const createSuperAdmin = require("./utils/createSuperAdmin");
+const createDummyStudent = require("./utils/createDummyStudent");
 
 const corsOptions = {
   origin: "http://localhost:3000",
@@ -21,6 +23,7 @@ mongoose
   .then(() => {
     console.log("Database connection Success.");
     checkSuperAdmin();
+    checkDummyStudent();
   })
   .catch((err) => {
     console.error("Mongo Connection Error", err);
@@ -53,5 +56,20 @@ async function checkSuperAdmin() {
     }
   } catch (error) {
     console.error("Error checking super admin:", error);
+  }
+}
+
+async function checkDummyStudent() {
+  try {
+    const dummyStudent = await Student.findOne({ email: "nitin@gmail.com" });
+
+    if (!dummyStudent) {
+      // Create the super admin if it doesn't exist
+      await createDummyStudent();
+    } else {
+      console.log("Dummy Student already exists.");
+    }
+  } catch (error) {
+    console.error("Error checking dummy student:", error);
   }
 }

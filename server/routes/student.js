@@ -15,7 +15,7 @@ router.post("/verifyOtp", verifyOtp);
 
 router.post("/reset-password", ResetPassword);
 
-router.post("/getUserData", validateToken, AuthController);
+router.get("/getUserData", validateToken, AuthController);
 
 // router.patch("/reset",  AuthController.ResetPassword);
 
