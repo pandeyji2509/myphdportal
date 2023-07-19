@@ -147,4 +147,53 @@ const send_date_time = async (email, _id) => {
   }
 }
 
-module.exports = { sendOtpEmail, send_forget_password_email };
+
+
+const sendPasswordEmail = async(userEmail, password, _id) => {
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.AUTH_USER,
+      pass: process.env.AUTH_PASS,
+    },
+  });
+
+  try {
+
+    var body_html = `<!DOCTYPE> 
+    <html>
+      <body>
+        <p>Thank you registering to our portal<p>
+        <p>Your Password is : </p> <b>${password}</b>
+      </body>
+    </html>`;
+    // Email content
+    let mailOptions = {
+      from: process.env.EMAIL_USER, // sender address
+      to: userEmail,
+      subject: 'PU PhD Portal Password',
+      html: body_html,
+    };
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+    
+    return {
+      error: false,
+      message: "Password email sent successfully",
+      data: {
+        userId: _id,
+        email,
+      },
+    };
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return{
+      error: true,
+      message: "Couldn't send the password email",
+    }
+  }
+}
+
+module.exports = { sendOtpEmail, send_forget_password_email, sendPasswordEmail };

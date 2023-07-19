@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const { generateJwt } = require("../utils/generateJwt");
 const { hashPassword, comparePassword } = require("../utils/bycrpt");
-const { sendOtpEmail, send_forget_password_email } = require("../utils/mailer");
+const { sendOtpEmail, send_forget_password_email, sendPasswordEmail } = require("../utils/mailer");
 const { createUser, updateUser } = require("../services/user");
 const { otpModel } = require("../models/Otp");
 const { sign_up } = require("../services/signup");
@@ -328,5 +328,105 @@ const resendOtp = async (req, res) => {
   } catch (error) {}
 };
 
+// Function to generate a random password with at least one uppercase, one lowercase, and one numeric character,
+// and concatenate it with the first three non-whitespace characters of the first name
+const generatePassword = (firstName) => {
+  const uppercaseCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercaseCharacters = 'abcdefghijklmnopqrstuvwxyz';
+  const numericCharacters = '0123456789';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword };
+  let password = '';
+  let count = 0;
+  let hasUppercase = false;
+  let hasLowercase = false;
+  let hasNumeric = false;
+
+  // Starts with first three non-whitespace characters of the first name
+  for (let i = 0; i < firstName.length; i++) {
+    if (count >= 3) {
+      break;
+    }
+    if (firstName[i] !== ' ') {
+      password += firstName[i];
+      count++;
+    }
+  }
+
+  // password will have least one uppercase, one lowercase, and one numeric character
+  while (password.length < 8 || !hasUppercase || !hasLowercase || !hasNumeric) {
+    const randomIndex = Math.floor(Math.random() * uppercaseCharacters.length);
+    const randomCharacter = uppercaseCharacters.charAt(randomIndex);
+    if (!hasUppercase) {
+      password += randomCharacter;
+      hasUppercase = true;
+    }
+
+    const randomIndex2 = Math.floor(Math.random() * lowercaseCharacters.length);
+    const randomCharacter2 = lowercaseCharacters.charAt(randomIndex2);
+    if (!hasLowercase) {
+      password += randomCharacter2;
+      hasLowercase = true;
+    }
+
+    const randomIndex3 = Math.floor(Math.random() * numericCharacters.length);
+    const randomCharacter3 = numericCharacters.charAt(randomIndex3);
+    if (!hasNumeric) {
+      password += randomCharacter3;
+      hasNumeric = true;
+    }
+
+    password += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return password;
+};
+
+
+
+const sendCredentials = async(req,res) =>{
+  try {
+    const user = await Student.findOne({email: req.body.email});
+
+    if(user){
+      const firstName = user.firstName;
+
+      //password generated
+      const password = generatePassword(firstName);
+
+      const sendPassword = await sendPasswordEmail(req.body.email, password, user._id);
+
+      if (sendPassword.error) {
+        return res.status(500).json({
+          error: true,
+          message: "Couldn't send password email.",
+        });
+      }
+
+      //password hashed
+      const hash = await hashPassword(password);
+
+      //hashed password stored in the db
+      user.isApproved = true;
+
+      user.password = hash;
+      await user.save();
+
+      res.status(200).send({
+        status: "success",
+        message: sendPassword.message,
+      })
+      
+    }else{
+      res.status(404).send({
+        error: true,
+        message: "User not found, please sign up to the portal"
+      })
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, sendCredentials };
