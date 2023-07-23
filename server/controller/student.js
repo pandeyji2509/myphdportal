@@ -14,6 +14,7 @@ const { log_in } = require("../services/login");
 const Admin = require("../models/admin");
 const Student = require("../models/student");
 const Department = require("../models/department");
+const Scores = require("../models/scores");
 
 const Signup = async (req, res) => {
   res = await sign_up(req.body, Student);
@@ -429,4 +430,61 @@ const sendCredentials = async(req,res) =>{
   }
 };
 
-module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, sendCredentials };
+const getStudentsByDepartment = async (req, res) => {
+  const { department } = req.query;
+  
+  try {
+    const students = await Student.find({ department }); 
+    return res.status(200).json({ students });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error fetching students', error: error.message });
+  }
+};
+
+const getScores = async (req, res) => {
+  const { studentId } = req.params;
+  try {
+    const scores = await Scores.findOne({ _id: studentId });
+    if (!scores) {
+      return res.status(404).json({ message: "Scores not found for this student" });
+    }
+    return res.status(200).json({ scores });
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching scores", error: error.message });
+  }
+};
+
+const updateScores = async (req, res) => {
+  const { studentId } = req.params;
+  const updatedScores = req.body;
+  
+  updatedScores.overall = updatedScores.bsc + updatedScores.msc + updatedScores.interaction + updatedScores.proposal + updatedScores.scholarship;
+  
+  try {
+    // Update the Scores document with the provided student ID
+    const scores = await Scores.findOneAndUpdate(
+      { _id: studentId },
+      updatedScores,
+      { new: true }
+    );
+    
+    // Update the Student document with the overall marks and approval status
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      { overallMarks: scores.overall, isApproved: scores.finalApproval },
+      { new: true }
+    );
+
+    if (!scores || !updatedStudent) {
+      return res.status(404).json({ message: "Scores not found for this student" });
+    }
+
+    return res.status(200).send({ message: "Scores updated successfully", scores, success: true });
+  } catch (error) {
+    return res.status(500).json({ message: "Error updating scores", error: error.message });
+  }
+};
+
+
+
+module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, sendCredentials, getStudentsByDepartment, getScores, updateScores };

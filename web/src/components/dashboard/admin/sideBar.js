@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { DarkModeContext } from '../../../context/DarkModeContext';
 import { FaHome, FaMoneyBillWave, FaEnvelope, FaFileAlt, FaUserAlt} from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
@@ -6,27 +6,9 @@ import NavButton from '../NavButton';
 
 const SideBar = () => {
   const { darkMode } = useContext(DarkModeContext);
-  const [activeButton, setActiveButton] = useState("");
-  const [showSubButtons, setShowSubButtons] = useState(false);
 
   const location = useLocation();
   const currentPath = location.pathname;
-
-  const handleButtonClick = (text) => {
-    if (text === "Registrations") {
-      setActiveButton(activeButton === "New Registrations" ? "" : "New Registrations");
-      setShowSubButtons(!showSubButtons);
-    } else {
-      setActiveButton(text);
-      setShowSubButtons(false);
-    }
-  };
-  
-  
-
-  const handleSubButtonClick = (text) => {
-    setActiveButton(text);
-  };
 
   return (
     <div className={`${darkMode ? "bg-gray-800 " : "bg-[#181c2c]"} w-1/6 h-full `}>
@@ -40,53 +22,30 @@ const SideBar = () => {
           text="Home"
           to="/admin"
           icon={<FaHome className="mr-4" />}
-          onClick={() => {handleButtonClick("Home")}}
           active={currentPath === "/admin"}
         />
         <NavButton
           text="Registrations"
           to="/admin/students"
           icon={<FaUserAlt className="mr-4" />}
-          onClick={() => handleButtonClick("Registrations")}
-          active={currentPath === "/admin/students" && (activeButton === "Registrations")}
-
-          showSubButtons={showSubButtons}
+          active={currentPath === "/admin/students"}
         />
-        {showSubButtons && (
-          <div className="pl-8 text-sm">
-            <NavButton
-              text="New Registrations"
-              to="/admin/students"
-              onClick={() => handleSubButtonClick("New Registrations")}
-              active={currentPath === "/admin/students" && activeButton === "New Registrations"}
-            />
-            <NavButton
-              text="Approved Students"
-              to="/admin/approved"
-              onClick={() => handleSubButtonClick("Approved Students")}
-              active={currentPath === "/admin/approved" && activeButton === "Approved Students"}
-            />
-          </div>
-        )}
         <NavButton
           text="Fee Portal"
           to="/admin/FeePortal"
           icon={<FaMoneyBillWave className="mr-4" />}
-          onClick={() => handleButtonClick("Fee Portal")}
           active={currentPath === "/admin/FeePortal"}
         />
         <NavButton
           text="Notice Board"
           to="/admin/NoticeBoard"
           icon={<FaEnvelope className="mr-4" />}
-          onClick={() => handleButtonClick("Notice Board")}
           active={currentPath === "/admin/NoticeBoard"}
         />
         <NavButton
           text="Profile"
           to="/admin/Profile"
           icon={<FaFileAlt className="mr-4" />}
-          onClick={() => handleButtonClick("Profile")}
           active={currentPath === "/admin/Profile"}
         />
       </ul>

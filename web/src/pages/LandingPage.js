@@ -9,15 +9,14 @@ import { Routes, Route } from "react-router-dom";
 
 function LandingPage() {
   return (
-    <>
-        <div className="flex flex-col h-screen bg-[#f8f4fc]">
-          <NavBar />
+    <>  
+        <NavBar />
           <Routes>
             <Route path="/" element = {<Home />} />
             <Route path="/form" element = {<FormPage />} />
             <Route path="/notice" element = {<NoticePage />} />
           </Routes>
-        </div>
+
         <Footer />
     </>
    

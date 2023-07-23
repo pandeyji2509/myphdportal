@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { DarkModeContext } from '../../context/DarkModeContext';
 import { NavLink } from 'react-router-dom';
-import { useSelector } from "react-redux";
 
 const NavButton = ({ text, to, icon, active, onClick, color }) => {
   const { darkMode } = useContext(DarkModeContext);

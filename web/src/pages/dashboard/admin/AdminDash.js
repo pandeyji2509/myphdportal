@@ -15,6 +15,8 @@ import NoticeBoard from "../../../components/dashboard/admin/NoticeBoard";
 import FeePortal from "../../../components/dashboard/admin/FeePortal";
 import SideBarSuperAdmin from '../../../components/dashboard/admin/sideBarSuperAdmin';
 import AddDepartment from '../../../components/dashboard/admin/addDepartment';
+import ViewStudent from '../../../components/dashboard/admin/ViewStudent';
+
 import { useAppContext } from '../../../context/context';
 
 const Home = ({ onAddNew }) => {
@@ -57,8 +59,8 @@ function AdminDash() {
           <Routes>
             <Route path="/" element={<Home onAddNew={toggleNewNotice} />} />
             <Route path="/students" element={<Student />} />
+            <Route path="/viewStudent" element={<ViewStudent/>} />
             <Route path="/AddDepartment" element={<AddDepartment />} />
-            <Route path="/approved" element={<Approved />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/NoticeBoard" element={<NoticeBoard />} />
             <Route path="/FeePortal" element={<FeePortal />} />

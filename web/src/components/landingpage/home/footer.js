@@ -6,9 +6,8 @@ const Footer = () => {
         // <div className="h-24 bg-[#0C1A4E] flex text-white text-center font-bold justify-center items-center">
         //  Copyright © 2023
         // </div>
-         <div className="bg-[#181c2c] text-sm h-36 flex flex-row items-center">
-            <img src="pu-logodark.png" alt="" className='h-24 mx-4' />
-            <div className='text-white'>
+         <div className="bg-[#181c2c] text-sm h-32 flex flex-row items-center">
+            <div className='text-white ml-8'>
                 <div className=" font-bold text-lg">Panjab University</div>
                 <div className="">Chandigarh, India</div>
                 <div>+91-(XXXXXXXXXX)</div>
@@ -19,14 +18,12 @@ const Footer = () => {
                     <div>PU News</div>
                     <div>RTI</div>
                     <div>University Forms</div>
-                    <div>Directorate of Sports</div>
                 </div>
                 <div className='text-white flex flex-col '>
                     <div className='text-lg underline cursor'>Support and Services</div>
                     <div>Public Relations</div>
                     <div>SAIF /CIL /UCIM</div>
                     <div>Publication Bureau</div>
-                    <div>Radio Station</div>
                 </div>  
                 <div className='text-white flex flex-col '>
                     <div className='text-lg underline cursor'>Intranet</div>

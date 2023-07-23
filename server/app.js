@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const studentRoutes = require("./routes/student");
 const adminRoutes = require("./routes/admin");
+const stats = require("./routes/stats");
 const Admin = require("./models/admin");
 const Student = require("./models/student");
 const createSuperAdmin = require("./utils/createSuperAdmin");
@@ -35,6 +36,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/v1/student", studentRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/stats", stats);
 
 app.get("/", () => {
   console.log("get working");

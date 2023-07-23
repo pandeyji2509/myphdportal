@@ -4,9 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "server": "nodemon app.js",
-    "web": "npm start --prefix ../web",
-    "dev": "concurrently \"npm run server\" \"npm run web\" "
+    "start": "nodemon app.js"
   },
   "keywords": [],
   "author": "",

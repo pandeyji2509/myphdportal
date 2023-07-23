@@ -420,6 +420,7 @@ const Login = async (req, res) => {
         email: req.body.email,
         student: null,
         department: depObj._id,
+        departmentName: req.body.depName,
       };
       
       const adminObj = await createUser(userData, Admin);

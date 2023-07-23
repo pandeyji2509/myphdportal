@@ -3,7 +3,6 @@ import FileUploadComponent from './FileUploadComponent';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useAppContext } from '../../../context/context'
-import axios from 'axios';
 import { faculties, departmentOptions, stateOptions, masterDegreeOptions, eligibilityTestOptions, masterYearOptions, genderOptions} from '../../../constants/formConstants';
 
 function WriteField({ fields, keyStyle, labelStyle, inputStyle, formik }) {

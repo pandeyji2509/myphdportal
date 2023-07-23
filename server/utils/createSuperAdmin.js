@@ -10,7 +10,8 @@ const createSuperAdmin = async () => {
       password: process.env.SUPER_ADMIN_PASSWORD,
       role: 'superadmin',
       department: null, // Set the department field to null for the super admin
-      name: 'RNS Branch',
+      name: 'RNS Admin',
+      departmentName: 'RNS Branch',
     };
 
     console.log(superAdminData);

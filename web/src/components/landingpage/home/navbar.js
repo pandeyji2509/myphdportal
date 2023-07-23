@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 const NavBar = () => {
 
   return (
-      <div className="h-24 font-['IBM_Plex_Sans'] bg-[#181c2c] flex">
+      <div className="h-[12vh] font-['IBM_Plex_Sans'] bg-[#181c2c] flex">
         {/* FIRST HALF */}
         <div className="w-1/2 flex items-center">
           

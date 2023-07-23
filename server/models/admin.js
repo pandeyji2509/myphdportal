@@ -7,7 +7,8 @@ const adminSchema = new Schema(
     password: { type: String, required: true },
     role: { type: String, required: true, default : "admin"},
     name: { type: String, required: true },
-    department: { type: Schema.Types.ObjectId, ref: "Department" },
+    departmentName: { type: String, required: true },
+    department: { type: Schema.Types.ObjectId, ref: "Department" }
   },
   { timestamps: true }
 );

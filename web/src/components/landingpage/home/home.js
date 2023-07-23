@@ -18,17 +18,16 @@ const Home = () => {
     };
 
     return (
-    <div className="font-['IBM_Plex_Sans'] flex flex-grow h-full bg-[#f8f4fc]">
+    <div className="font-['IBM_Plex_Sans'] flex flex-grow h-[88vh] bg-[#f8f4fc]">
 
         {/* LEFT SECTION */}
 
-        <div className={`w-8/12 bg-[#f8f4fc] p-8`}>
+        <div className={`w-8/12 bg-[#f8f4fc] p-8 h-full`}>
             <Announcement />
-            <div className="flex">
-               
-                <div className="w-2/5 mr-4">
-                    <div className="h-12 font-semibold items-center flex text-lg rounded-t-md px-4   bg-white border-b-2">Public Notice</div>
-                    <div className="h-80 overflow-y-scroll text-gray-600 bg-white font-medium rounded-md shadow-sm pb-4 text-sm"> 
+            <div className="flex h-[70%]">
+                <div className="w-2/5 mr-4 h-full">
+                    <div className="h-[10%] font-semibold items-center flex text-lg rounded-t-md px-4   bg-white border-b-2">Public Notice</div>
+                    <div className="h-[90%] overflow-y-scroll text-gray-600 bg-white font-medium rounded-md shadow-sm pb-4 text-sm"> 
                         <NoticeBoard />
                     </div>
                 </div>
