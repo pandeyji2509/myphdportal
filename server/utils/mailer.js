@@ -149,7 +149,7 @@ const send_date_time = async (email, _id) => {
 
 
 
-const sendPasswordEmail = async(userEmail, password, _id) => {
+const sendPasswordEmail = async(userEmail, password,department, _id) => {
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -164,13 +164,17 @@ const sendPasswordEmail = async(userEmail, password, _id) => {
     var body_html = `<!DOCTYPE> 
     <html>
       <body>
-        <p>Thank you registering to our portal<p>
-        <p>Your Password is : </p> <b>${password}</b>
+
+        <p>Congratulations! After careful consideration of your application and qualifications, we are pleased to inform you that you have been selected for admission to our prestigious PhD program offered by the department of ${department}. <p>
+
+        <p>You can now login to the portal using below mentioned credentials<p>
+        <p>Your Username : <b>${userEmail}</b> </p> 
+        <p>Your Password : <b>${password}</b> </p> 
       </body>
     </html>`;
     // Email content
     let mailOptions = {
-      from: process.env.EMAIL_USER, // sender address
+      from: process.env.AUTH_USER, // sender address
       to: userEmail,
       subject: 'PU PhD Portal Password',
       html: body_html,
@@ -184,7 +188,6 @@ const sendPasswordEmail = async(userEmail, password, _id) => {
       message: "Password email sent successfully",
       data: {
         userId: _id,
-        email,
       },
     };
   } catch (error) {

@@ -63,7 +63,7 @@ async function checkSuperAdmin() {
 
 async function checkDummyStudent() {
   try {
-    const dummyStudent = await Student.findOne({ email: "nitin@gmail.com" });
+    const dummyStudent = await Student.findOne({ email: "nk09.cric@gmail.com" });
 
     if (!dummyStudent) {
       // Create the super admin if it doesn't exist

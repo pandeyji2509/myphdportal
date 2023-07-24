@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { validateToken } = require("../middlewares/validateToken");
 
-const { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment } = require("../controller/admin");
+const { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment, sendCredentials } = require("../controller/admin");
 
 router.post("/signup", Signup);
 
@@ -22,5 +22,7 @@ router.get("/getUserData", validateToken, AuthController);
 // router.patch("/reset",  AuthController.ResetPassword);
 
 // router.get("/logout", validateToken, AuthController.Logout);
+
+router.post("/sendCredentials", sendCredentials);
 
 module.exports = router;

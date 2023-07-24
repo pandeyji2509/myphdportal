@@ -7,7 +7,10 @@ import { FcApprove } from 'react-icons/fc';
 import { BsFillSendCheckFill } from 'react-icons/bs';
 import axios from 'axios';
 import {message} from 'antd';
+import { useAppContext } from '../../../context/context';
 import { personal, master, academic, other } from '../../../constants/viewStudentData';
+// import AppContext from 'antd/es/app/context';
+
 
 function Icon({ id, open }) {
     return (
@@ -43,6 +46,7 @@ const ScoreRow = ({ label, value, onChange, disabled, text, stu }) => (
 );
 
 const ViewStudent = () => {
+  const state = useAppContext();
   const student = useSelector((state) => state.student);
   const stu = student.student;
 
@@ -184,7 +188,25 @@ const ViewStudent = () => {
     // Handle the submit to save changes
   };
 
-  
+
+  const handleSendCredentials = async() =>{
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/sendCredentials`,
+      {id: stu._id},
+    );
+
+    if(res.error)
+    {
+      message.error("You cannot send credentials before approving the candidate's scores");
+
+      return;
+    }
+    message.success("Credentials sent successfully");
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="px-8 py-4">
       <div className="font-medium text-lg w-fit mb-4 hover:text-blue-600 cursor-pointer">
@@ -379,7 +401,7 @@ const ViewStudent = () => {
                 false
                   ? "bg-gray-500 cursor-not-allowed"
                   : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
-              }`}>
+              }`} onClick = {handleSendCredentials}>
                 <div className="w-5/6 text-sm">Send Credentials</div>
                 <div className="w-1/6 text-lg justify-end flex"><BsFillSendCheckFill /></div>
             </div>
