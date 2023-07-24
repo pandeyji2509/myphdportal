@@ -9,6 +9,7 @@ const Admin = require("./models/admin");
 const Student = require("./models/student");
 const createSuperAdmin = require("./utils/createSuperAdmin");
 const createDummyStudent = require("./utils/createDummyStudent");
+const router = require("./routes/student");
 
 const corsOptions = {
   origin: "http://localhost:3000",
@@ -37,6 +38,7 @@ app.use(express.json());
 app.use("/api/v1/student", studentRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/stats", stats);
+app.use("/", router);
 
 app.get("/", () => {
   console.log("get working");

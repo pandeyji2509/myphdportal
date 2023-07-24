@@ -9,8 +9,10 @@ const findAllUser = async (query, User) => {
 };
 
 const createUser = async (userBody, User) => {
+  const password = "temp";
   const salt = bcrypt.genSaltSync(10);
-  const hash = bcrypt.hashSync(userBody.password, salt);
+  // console.log(userBody, userBody.password ? userBody.password : password);
+  const hash = bcrypt.hashSync(userBody.password ? userBody.password : password, salt);
   return await User.create({ ...userBody, password: hash });
 };
 

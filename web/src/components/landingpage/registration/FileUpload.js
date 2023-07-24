@@ -1,15 +1,15 @@
-import React, { useState, useRef } from 'react';
-import { MdCloudUpload } from 'react-icons/md';
+import React, { useState, useRef } from "react";
+import { MdCloudUpload } from "react-icons/md";
 import { BsFillFileEarmarkPdfFill } from "react-icons/bs";
 
-
-
-const FileUpload = () => {
+const FileUpload = ({ formik, label }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const fileInputRef = useRef(null);
 
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
+    // console.log("files", files[0]);
+    formik.setFieldValue(label, files[0]);
     setSelectedFiles(files);
   };
 
@@ -55,7 +55,7 @@ const FileUpload = () => {
             {selectedFiles.map((file) => (
               <div className="flex items-center" key={file.name}>
                 <div className="w-1/5 flex justify-center">
-                  {file.type.includes('image') ? (
+                  {file.type.includes("image") ? (
                     <img
                       src={URL.createObjectURL(file)}
                       alt={file.name}
@@ -84,11 +84,11 @@ const FileUpload = () => {
 
 // Helper function to format file size
 const formatFileSize = (bytes) => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
 export default FileUpload;

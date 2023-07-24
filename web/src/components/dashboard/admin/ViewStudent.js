@@ -194,9 +194,11 @@ const ViewStudent = () => {
       const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/sendCredentials`,
       {id: stu._id},
     );
+    console.log(res);
 
-    if(res.error)
+    if(res.data.error)
     {
+
       message.error("You cannot send credentials before approving the candidate's scores");
 
       return;

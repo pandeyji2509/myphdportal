@@ -1,9 +1,9 @@
 export const faculties = ['Faculty of Arts', 'Faculty of Science', 'Faculty of Engineering'];
 
 export const departmentOptions = {
-    'Faculty of Arts': ['A', 'B'],
-    'Faculty of Science': ['C', 'D'],
-    'Faculty of Engineering': ['E', 'F'],
+    'Faculty of Arts': ['Arts College', 'University of Arts'],
+    'Faculty of Science': ['Physics Department', 'Chemistry Department'],
+    'Faculty of Engineering': ['University Institute of Engineering and Technology, Panjab University', 'UIMS'],
   };
 
 export const genderOptions = ['Male', 'Female', 'Prefer Not to Say'];

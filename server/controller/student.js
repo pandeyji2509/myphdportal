@@ -37,7 +37,7 @@ const Login = async (req, res) => {
     const user = await Student.findOne({ email: email });
 
     // NOT FOUND - Throw error
-    if (!user) {
+    if (!user || !user.isApproved) {
       return res.status(200).send({
         message: "Account Not Found", 
         success: false});
@@ -333,9 +333,10 @@ const resendOtp = async (req, res) => {
 
 const getStudentsByDepartment = async (req, res) => {
   const { department } = req.query;
-  
+  console.log(department);
   try {
-    const students = await Student.find({ department }); 
+    const students = await Student.find({ department });
+    console.log(students); 
     return res.status(200).json({ students });
   } catch (error) {
     return res.status(500).json({ message: 'Error fetching students', error: error.message });

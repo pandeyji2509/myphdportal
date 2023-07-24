@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const studentSchema = new Schema(
   {
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, default: null},
     isApproved: {type: Boolean, default: false},
     firstName: { type: String },
     lastName: { type: String },
@@ -34,8 +34,12 @@ const studentSchema = new Schema(
     isScholarship: {type: Boolean, default: true},
     regNumber: { type: String },
     researchDep: { type: String },
-    employed: { type: Boolean },
+    employed: { type: String },
     employerDetails: { type: String },
+    noc: String,
+    migration: String,
+    eligibility: String,
+    dmc: String,
   },
   { timestamps: true }
 );

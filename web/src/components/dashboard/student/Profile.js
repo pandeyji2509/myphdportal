@@ -14,7 +14,7 @@ const Profile = () => {
             <div className={`w-full flex mb-4`}>
                 <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-white  shadow-md"} p-8 w-2/5 rounded-md mr-4 h-fit`}>
                     <div className='bg-[url("../public/profile.png")] bg-contain bg-no-repeat bg-center h-40 mb-4'></div>
-                    <h2 className="text-2xl font-bold mb-4 justify-center text-center">Nitin Kumar</h2>
+                    <h2 className="text-2xl font-bold mb-4 justify-center text-center">{data.firstName + " " + data.lastName }</h2>
                     <StudentDetail heading={"Department"} text={data.department} />
                     <StudentDetail heading={"Subject"} text={data.subject} />
                     <StudentDetail heading={"Faculty"} text={data.faculty} />

@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import FileUploadComponent from './FileUploadComponent';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useAppContext } from '../../../context/context'
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./formstyles.css";
+
 import { faculties, departmentOptions, stateOptions, masterDegreeOptions, eligibilityTestOptions, masterYearOptions, genderOptions} from '../../../constants/formConstants';
 
 function WriteField({ fields, keyStyle, labelStyle, inputStyle, formik }) {
@@ -48,64 +52,82 @@ function WriteField({ fields, keyStyle, labelStyle, inputStyle, formik }) {
 }
 
 function Form() {
+  const [loading, setLoading] = useState(false);
   const { createSession } = useAppContext();
-
+  const navigate = useNavigate(); 
   const [error, setError] = useState({
     email: '',
   });
 
-  // const registerUser = async (body) => {
-  //   try {
-  //     console.log(process.env.REACT_APP_SERVER_ENDPOINT);
-  //     const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/signup`, body);
-  //     console.log(res);
-  //     if (res.status === 200) {
-  //       createSession({ accessToken: res.data.accessToken, _id: res.data.userObj._id });
-  //       handleSetOtp(true);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     setError((prevstate) => {
-  //       return { ...prevstate, email: error.response.data.message };
-  //     });
-  //   }
-  // };
+  const registerUser = async (body) => {
+    setLoading(true);
+    try {
+      console.log(process.env.REACT_APP_SERVER_ENDPOINT);
+      const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/upload`, body, {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      });
+      console.log(res);
+      if (res.status === 200) {
+        setLoading(false);
+        navigate("/success");
+        // createSession({ accessToken: res.data.accessToken, _id: res.data.userObj._id });
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      setError((prevstate) => {
+        return { ...prevstate, email: error.response.data.message };
+      });
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const shouldSubmit = window.confirm("Are you sure you want to submit?"); // Show a confirmation dialog
+    if (shouldSubmit) {
+      // Proceed with form submission
+      console.log("submitting", formik.values);
+      console.log(formik.values);
+      registerUser(formik.values);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
-      faculty: '',
-      department: '',
-      subject: '',
-      firstName: '',
-      lastName: '',
-      gender: '',
-      fatherName: '',
-      motherName: '',
-      mobileNumber: '',
-      permaddress: '',
-      localaddress: '',
-      aadhar: '',
-      telNumber: '',
-      state: '',
-      email: '',
-      masterDegree: '',
-      masterYear: '',
-      masterUniversity: '',
-      masterDivision: '',
-      masterMarks: '',
-      masterPercent: '',
-      masterSubject: '',
-      masterRollNo: '',
-      eligibilityTest: '',
-      regNumber: '',
-      researchDep: '',
-      employed: '',
-      employerDetails: '',
-    },
-    onSubmit: () => {
-      console.log('submitting', formik.values);
-      // console.log(formik.errors);
-      // registerUser(formik.values);
+      faculty: "",
+      department: "",
+      subject: "",
+      firstName: "",
+      lastName: "",
+      gender: "",
+      fatherName: "",
+      motherName: "",
+      mobileNumber: "",
+      permaddress: "",
+      localaddress: "",
+      aadhar: "",
+      telNumber: "",
+      state: "",
+      email: "",
+      masterDegree: "",
+      masterYear: "",
+      masterUniversity: "",
+      masterDivision: "",
+      masterMarks: "",
+      masterPercent: 0,
+      masterSubject: "",
+      masterRollNo: "",
+      eligibilityTest: "",
+      regNumber: "",
+      researchDep: "",
+      employed: "",
+      employerDetails: "",
+      dmc: "",
+      migration: "",
+      noc: "",
+      eligibility: "",
     },
     validationSchema: Yup.object().shape({
       email: Yup.string().email('Invalid email address').required('Required'),
@@ -153,6 +175,17 @@ function Form() {
 
   return (
     <>
+      {loading && <div className={`backdrop fixed top-0 left-0 w-full h-full`} />}
+
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center z-50">
+          <div className="bg-white p-4 rounded-md shadow-md">
+            <div className="text-center text-xl font-bold my-4">Submitting the form...</div>
+            <div><img src="loading.gif" alt="" /></div>
+          </div>
+        </div>
+       )}
+
       <div>
         <div className="border-b border-gray-300 mb-2 mx-12"></div>
         <div className="text-gray-500 font-bold text-center px-12">
@@ -161,7 +194,7 @@ function Form() {
         <div className="border-b border-gray-300 mt-2 mb-8 mx-12"></div>
       </div>
 
-      <form onSubmit={formik.handleSubmit} className="">
+      <form className="">
         {/* Form fields */}
         <div className="bg-white rounded-lg w-full p-8 shadow-md flex">
           <WriteField fields={formFields.slice(0, 1)} labelStyle="w-fit" keyStyle="w-1/3 justify-start" inputStyle="w-3/4" formik={formik}/>
@@ -193,13 +226,13 @@ function Form() {
         </div>
         <div className="flex mt-4 text-white font-bold bg-blue-400 rounded-md p-2 pl-8">DOCUMENTS UPLOAD</div>
         <div className="mt-4 bg-white rounded-lg w-full px-8 py-4 shadow-md overflow-hidden">
-          <FileUploadComponent />
+          <FileUploadComponent formik={formik} />
         </div>
         <div className="flex justify-center">
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white text-lg font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-8 tracking-widest"
-            >
+            onClick={handleSubmit}>
               SUBMIT
             </button>
           </div>

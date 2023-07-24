@@ -46,6 +46,7 @@ const Student = () => {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/student/getStudentByDep`, {
         params: { department: departmentName },
       });
+      console.log(response.data.students);
       setStudents(response.data.students);
     } catch (error) {
       console.error('Error fetching students:', error);
@@ -66,19 +67,6 @@ const Student = () => {
 
   const handleVenueChange = (e) => {
     setVenue(e.target.value);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('');//Api should be there
-    setData(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
   };
 
   console.log(students);
@@ -216,8 +204,8 @@ const Student = () => {
         <div className="ml-4 w-2/12">Name</div>
         <div className="w-2/12">Subject</div>
         <div className="w-1/12">Gender</div>
-        <div className="w-2/12">Mobile</div>
-        <div className="w-2/12">Email</div>
+        <div className="w-1/12">Mobile</div>
+        <div className="w-3/12 pl-4">Email</div>
         <div className="w-1/12">Score</div>
         <div className="w-2/12 flex justify-center">
           <div className="w-4/5 text-center">Action</div>
@@ -264,8 +252,8 @@ const Student = () => {
           <div className="ml-4 w-2/12">{student.firstName + " " + student.lastName} </div>
           <div className="w-2/12">{student.subject}</div>
           <div className="w-1/12">{student.gender}</div>
-          <div className="w-2/12">{student.mobileNumber}</div>
-          <div className="w-2/12">{student.email}</div>
+          <div className="w-1/12">{student.mobileNumber}</div>
+          <div className="w-3/12 pl-4">{student.email}</div>
           <div className="w-1/12">{student.overallMarks.toFixed(2)}</div>
           <div className="w-2/12 flex items-center justify-center">
               <div className="w-4/5 flex justify-center">
