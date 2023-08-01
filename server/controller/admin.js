@@ -415,12 +415,10 @@ const Login = async (req, res) => {
       console.log("Dep Obj", depObj);
   
       const userData = {
-        username: req.body.username,
         password: req.body.password,
         role: "admin",
         name: req.body.name,
-        email: req.body.email,
-        student: null,
+        email: req.body.depEmail,
         department: depObj._id,
         departmentName: req.body.depName,
       };
@@ -553,15 +551,15 @@ const sendCredentials = async(req,res) =>{
 
 const sendMeetInvite = async(req, res) =>{
   const {data, time, venue, date} = req.body;
-  
+  console.log(req.body);
   for(let i = 0; i<data.length; i++)
   {
       const user = await Student.findOne({_id: data[i]});
-      
+      console.log(user);
       if(user){
 
         const sendMail = await sendInteractionInvite(user.email, date, time, venue, data[i]);
-
+        console.log(sendMail);
         if(!sendMail.error)
         {
           user.mailSent = true;
@@ -572,9 +570,14 @@ const sendMeetInvite = async(req, res) =>{
         }
       }
       else{
-        console.log("User doest exist");
+        console.log("User doesn't exist");
       }
   }
+
+  res.status(200).send({
+    status: "success",
+    message: "Emails sent successfully",
+  })
 }
 
 

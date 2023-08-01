@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormik } from 'formik';
 import {message} from 'antd';
 import axios from "axios";
-
+import { faculties, departmentOptions} from '../../../constants/formConstants';
 function AddDepartment() {
 
   const registerDep = async (body) => {
@@ -31,9 +31,6 @@ function AddDepartment() {
       depName: '',
       depEmail: '',
       name: '',
-      email: '',
-      subjects: '',
-      username:'',
       password: '',
     },
     onSubmit: () => {
@@ -43,15 +40,18 @@ function AddDepartment() {
   });
 
   const formFields = [
-    { label: 'Faculty', name: 'faculty', placeholder: 'Faculty', type: 'text' },
-    { label: 'Department Name', name: 'depName', placeholder: 'Department Name', type: 'text' },
+    { label: 'Faculty', name: 'faculty', placeholder: 'Select Faculty', type: 'select', options: faculties },
+    {
+      label: 'Department Name',
+      name: 'depName',
+      placeholder: 'Select Department',
+      type: 'select',
+      options: departmentOptions[formik.values.faculty] || [],
+      disabled: !formik.values.faculty,
+    },
     { label: 'Department Email', name: 'depEmail', placeholder: 'Department Email', type: 'text' },
     { label: 'Admin Name', name: 'name', placeholder: 'Admin Name', type: 'text' },
-    { label: 'Admin Email', name: 'email', placeholder: 'email', type: 'text' },
-    { label: 'Subjects', name: 'subjects', placeholder: 'Subjects', type: 'text' },
     { label: 'Password', name: 'password', placeholder: 'Choose Password', type: 'text' },
-    { label: 'Username', name: 'username', placeholder: 'Choose Username', type: 'text' },
-    
   ];
 
   return (
@@ -64,7 +64,25 @@ function AddDepartment() {
                 <label htmlFor={field.name} className={`text-gray-700 font-bold w-1/6 mr-4 items-center`}>
                     {field.label}
                 </label>
-                    <input
+
+                {field.type === 'select' ? (
+                <select
+                  id={field.name}
+                  name={field.name}
+                  className={`shadow appearance-none border rounded py-2 px-3  w-5/6 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+                  value={formik.values[field.name]}
+                  onChange={formik.handleChange}
+                  required
+                >
+                  <option value="">Select {field.label}</option>
+                  {field.options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                  <input
                     type={field.type}
                     id={field.name}
                     name={field.name}
@@ -74,6 +92,7 @@ function AddDepartment() {
                     onChange={formik.handleChange}
                     required
                     />
+                )}
                 </div>
             ))}
           </div>

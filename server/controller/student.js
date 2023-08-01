@@ -333,10 +333,8 @@ const resendOtp = async (req, res) => {
 
 const getStudentsByDepartment = async (req, res) => {
   const { department } = req.query;
-  console.log(department);
   try {
     const students = await Student.find({ department });
-    console.log(students); 
     return res.status(200).json({ students });
   } catch (error) {
     return res.status(500).json({ message: 'Error fetching students', error: error.message });

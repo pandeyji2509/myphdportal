@@ -1,0 +1,58 @@
+const students = [
+    { 
+        email       : "nk09.cric@gmail.com", 
+        firstName   : "Nitin",
+        lastName    : "Kumar",
+        gender      : 'Male',
+        mobileNumber: '1738148194',
+        masterPercent: 95,
+        bscPercent: 80,
+    },
+    { 
+        email       : "ankitkumar.harendra@gmail.com", 
+        firstName   : "Prasad",
+        lastName    : "Ankit",
+        gender      : 'Male',
+        mobileNumber: '8917387913',
+        masterPercent: 90,
+        bscPercent: 85,
+    },
+    { 
+        email       : "sharma77munish@gmail.com", 
+        firstName   : "Munishwar",
+        lastName    : "Sharma",
+        gender      : 'Male',
+        mobileNumber: '9819737131',
+        masterPercent: 94,
+        bscPercent: 85,
+    },
+    { 
+        email       : "shubhvishwas45@gmail.com", 
+        firstName   : "Shubh",
+        lastName    : "Vishwas",
+        gender      : 'Male',
+        mobileNumber: '8791218373',
+        masterPercent: 74,
+        bscPercent: 75,
+    },
+    { 
+        email       : "gaurprachi61@gmail.com", 
+        firstName   : "Prachi",
+        lastName    : "Gaur",
+        gender      : 'Female',
+        mobileNumber: '9618712123',
+        masterPercent: 90,
+        bscPercent: 90,
+    },
+    { 
+        email       : "loonamedha10@gmail.com", 
+        firstName   : "Medha",
+        lastName    : "Loona",
+        gender      : 'Female',
+        mobileNumber: '9981821233',
+        masterPercent: 94,
+        bscPercent: 95,
+    },
+]
+
+module.exports = students;

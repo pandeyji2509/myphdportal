@@ -21,7 +21,7 @@ const TopBar = () => {
       };
 
     return ( 
-        <div className={`flex w-full items-center border-b-2 py-4 h-16 ${darkMode ? "bg-gray-800 border-gray-700" : "bg-white  border-gray-200"}`}>
+        <div className={`flex w-full items-center border-b-2 py-2 h-12 ${darkMode ? "bg-gray-800 border-gray-700" : "bg-white  border-gray-200"}`}>
                 <div className="flex w-1/2 h-full px-4">
                     <div className={`flex items-center rounded-lg px-2 py-1 ${darkMode ? "bg-gray-700 text-white" : "bg-gray-100"}`}>
                         <input

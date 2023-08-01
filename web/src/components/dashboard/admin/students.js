@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FaEye, FaEnvelope, FaFilePdf, FaCheck } from "react-icons/fa";
 import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+
 import { useAppContext } from '../../../context/context'
 import axios from 'axios';
 import EmailPopup from "./EmailPopup";
@@ -9,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import { setStudent } from "../../../redux/features/selectedStudentSlice";
 import {RiMailSendFill} from 'react-icons/ri';
 import {AiOutlineDownload, AiFillCheckCircle} from 'react-icons/ai';
+import {message} from 'antd';
+import { personal, master, academic, other } from "../../../constants/pdfData";
 
 const Student = () => {
   const dispatch = useDispatch();
@@ -18,8 +22,6 @@ const Student = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [showPopup, setShowPopup] = useState(false); // Added state for popup visibility
-  const { approvedUsers, setApprovedUsers } = useAppContext([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
   const [data, setData] = useState([]);
 
   const [date, setDate] = useState("");
@@ -31,6 +33,32 @@ const Student = () => {
   }
 
   const [students, setStudents] = useState([]);
+
+  // Define a state to keep track of selected student IDs
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+
+  // Function to handle "Select All" checkbox click
+  const handleSelectAll = () => {
+    if (!selectAll) {
+      // If "Select All" is not checked, select all students
+      setSelectedStudentIds(students.map((student) => student._id)); // Use the appropriate ID field from your student data
+    } else {
+      // If "Select All" is checked, unselect all students
+      setSelectedStudentIds([]);
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const handleCheckboxClick = (studentId) => {
+    setSelectedStudentIds((prevSelected) => {
+      if (prevSelected.includes(studentId)) {
+        return prevSelected.filter((_id) => _id !== studentId);
+      } else {
+        return [...prevSelected, studentId];
+      }
+    });
+    setSelectAll(false); // Unselect "Select All" when individual checkboxes are clicked
+  };
 
   const onViewStudent = (student) => {
     console.log(student);
@@ -70,106 +98,94 @@ const Student = () => {
   };
 
   console.log(students);
-  const sendEmailToStudents = () => {
-      
-    data.forEach((student) => {
-      const emailData = {
-        recipient: student.Email,
-        subject: "Mail from Admin",
-        message: `
-          Date: ${date}
-          Time: ${time}
-          Venue: ${venue}
-        `
-      };
+  const sendEmailToStudents = async() => {
+    const interactionDate = new Date(date).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" });
+    const interactionTime = new Date(`1970-01-01T${time}`).toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
 
-      axios
-        .post("/send-email", emailData) //And for Sending email write api here
-        .then((response) => {
-          console.log("Email sent successfully");
-          // Handle success, if needed
-        })
-        .catch((error) => {
-          console.log("Failed to send email:", error);
-          // Handle error, if needed
-        });
-    });
-
-    // Close the popup after sending the email
+    console.log(selectedStudentIds, interactionDate, interactionTime, venue);
     setShowPopup(false);
-  };
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/sendMeetInvite`,
+      { data  : selectedStudentIds,
+        time  : interactionTime,
+        venue : venue,
+        date  : interactionDate },
+      );
 
-  
+      console.log(res);
 
-  const toggleSelectAll = () => {
-    setSelectAll(!selectAll);
-    if (!selectAll) {
-      setSelectedItems((prevItems) => data.map((item) => item.S_No));
-    } else {
-      setSelectedItems([]);
-    }
-    
-  };
-  const toggleSelectItem = (itemId) => {
-    setSelectedItems((prevItems) => {
-      if (prevItems.includes(itemId)) {
-        return prevItems.filter((item) => item !== itemId);
-      } else {
-        return [...prevItems, itemId];
+      if(res.data.error){
+        message.error("Couldn't send Email");
+        return;
       }
-    });
+      message.success("Emails sent successfully");
+      } catch (error) {
+        console.log(error)
+    }
   };
-
-  useEffect(() => {
-    console.log(selectedItems);
-    console.log("Hello");
-  }, [selectedItems]);
-
-  const isItemSelected = (itemId) => {
-    return selectedItems.includes(itemId);
-  };
-
 
   const closePopup = () => {
     setShowPopup(false);
   };
 
   const generatePDF = () => {
-    const doc = new jsPDF();
-    const filteredData = data.filter((item) =>
-      selectedItems.includes(item.S_No)
-    );
-    
-    
-    
-    filteredData.forEach((item, index) => {
-      doc.text(10, 10, `Item ${item.S_No}`);
-      doc.text(10, 20, `Name: ${item.name}`);
-      doc.text(10, 30, `Department: ${item.department}`);
-      doc.text(10, 40, `Gender: ${item.gender}`);
-      doc.text(10, 50, `Contact: ${item.contact}`);
-      doc.text(10, 60, `Email: ${item.Email}`);
+  const doc = new jsPDF();
 
-      if (index !== filteredData.length - 1) {
-        doc.addPage();
-      }
+  const filteredData = students.filter((item) =>
+    selectedStudentIds.includes(item._id)
+  );
+
+  // Iterate through each student and create a separate page for each student
+  filteredData.forEach((student, index) => {
+    if (index > 0) {
+      doc.addPage();
+    }
+
+    // Custom function to render student details in PDF
+    renderStudentDetailsToPDF(doc, student);
+  });
+
+  doc.save("Student_Data.pdf");
+};
+
+const renderStudentDetailsToPDF = (doc, student) => {
+  // Set up styles for the table
+  const tableStyles = {
+    theme: "plain",
+    styles: { fontSize: 10, textColor: [0, 0, 0], lineWidth: 0.1 },
+    headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255] },
+    bodyStyles: { fillColor: [241, 241, 241] },
+  };
+
+  // Student details as an array of objects
+  const studentDetails = [
+    { name: "Academic Details", data : academic },
+    { name: "Personal Details", data : personal},
+    { name: "Master's Details", data : master },
+    { name: "Other Details", data : other },
+  ];
+
+  // Add student's name as a header on the page
+  doc.setFontSize(18);
+  doc.text(105, 20, `${student.firstName + " " + student.lastName}`, { align: "center" });
+
+  // Iterate through each student detail object and create a table for each
+  let startY = 30;
+  studentDetails.forEach((detailObj) => {
+    // Create a table for the student details
+    doc.autoTable({
+      ...tableStyles,
+      head: [[detailObj.name, ""]],
+      body: detailObj.data.map((detail) => [detail.field, student[detail.value]]),
+      startY,
     });
 
-    doc.save("Student_Data.pdf");
-  };
+    // Increase the startY for the next table
+    startY = doc.previousAutoTable.finalY + 10;
+  });
+};
 
-  const ApproveUser = () => {
-     
-    const filteredData = data.filter((item) =>
-      selectedItems.includes(item.S_No)
-    );
-    
-    setApprovedUsers((prevApprovedUsers) => [...prevApprovedUsers, ...filteredData]);
-  };
-  useEffect(() => {
-    console.log("Selected Users:", approvedUsers);
-  }, [approvedUsers]);
-
+  
   return (
     <>
       <div className="flex mb-4 relative">
@@ -179,7 +195,8 @@ const Student = () => {
             Send Interaction Invite 
             <RiMailSendFill className="ml-2"/>
           </div>
-          <div className="flex cursor-pointer hover:bg-gray-200 items-center rounded-md bg-gray-300 py-1 px-2 ml-8 text-sm w-fit relative">
+
+          <div className="flex cursor-pointer hover:bg-gray-200 items-center rounded-md bg-gray-300 py-1 px-2 ml-8 text-sm w-fit relative" onClick={generatePDF}>
             <div className="pdf-icon absolute w-8 h-8 bg-red-600 rounded-full left-[-10%] flex items-center justify-center">
               <FaFilePdf className="text-lg text-white" />
             </div>
@@ -195,7 +212,7 @@ const Student = () => {
               type="checkbox"
               className="h-4 w-4 rounded-lg cursor-pointer"
               checked={selectAll}
-              onChange={toggleSelectAll}
+              onChange={handleSelectAll}
             />
           </div>
           <div className="ml-3">S.No</div>
@@ -242,8 +259,8 @@ const Student = () => {
               <input
                 type="checkbox"
                 className="h-4 w-4 rounded-lg cursor-pointer"
-                checked={isItemSelected(index+1)}
-                onChange={() => toggleSelectItem(index+1)}
+                checked={selectedStudentIds.includes(student._id)} // Use the appropriate ID field from your student data
+                onChange={() => handleCheckboxClick(student._id)} // Use the appropriate ID field from your student data
               />
             </div>
             <div className="ml-6">{index+1}</div>

@@ -9,7 +9,7 @@ const EmailPopup = ({
 }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-[28%] backdrop-blur-[2px]">
-    <div className="bg-white p-4 rounded-lg">
+    <div className="bg-white w-[35%] p-4 rounded-lg">
       {/* <h2 className="text-lg font-semibold mb-2">Email</h2> */}
 
       <div className="flex mb-2 justify-center items-center">

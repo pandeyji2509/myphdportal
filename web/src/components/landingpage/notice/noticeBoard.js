@@ -8,7 +8,7 @@ const NoticeBoard = () => {
             <div className="mx-4">
                 {NoticeData.map((notice) => (
                     <div key={notice.id} className="py-2  border-b-2">
-                        <div className="text-gray-600">{notice.title}</div>
+                        <a href={notice.link} target="_blank"><div className="text-gray-600 hover:underline hover:text-blue-500">{notice.title}</div></a>
                         <div className="text-right font-bold">{notice.date}</div>
                     </div>
                 ))}
