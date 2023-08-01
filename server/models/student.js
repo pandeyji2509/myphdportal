@@ -36,6 +36,7 @@ const studentSchema = new Schema(
     researchDep: { type: String },
     employed: { type: String },
     employerDetails: { type: String },
+    mailSent:{ type: Boolean, default: false },
     noc: String,
     migration: String,
     eligibility: String,

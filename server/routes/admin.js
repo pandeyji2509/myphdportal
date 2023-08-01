@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { validateToken } = require("../middlewares/validateToken");
 
-const { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment, sendCredentials } = require("../controller/admin");
+const { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment, sendCredentials, sendMeetInvite } = require("../controller/admin");
 
 router.post("/signup", Signup);
 
@@ -24,5 +24,7 @@ router.get("/getUserData", validateToken, AuthController);
 // router.get("/logout", validateToken, AuthController.Logout);
 
 router.post("/sendCredentials", sendCredentials);
+
+router.post("/sendMeetInvite", sendMeetInvite );
 
 module.exports = router;

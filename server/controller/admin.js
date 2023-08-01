@@ -8,7 +8,7 @@ const { hashPassword, comparePassword } = require("../utils/bycrpt");
 const { createUser, updateUser } = require("../services/user");
 const { sign_up } = require("../services/signup");
 const { log_in } = require("../services/login");
-const { sendPasswordEmail } = require("../utils/mailer");
+const { sendPasswordEmail, sendInteractionInvite } = require("../utils/mailer");
 
 const Admin = require("../models/admin");
 const Student = require("../models/student");
@@ -551,5 +551,32 @@ const sendCredentials = async(req,res) =>{
   }
 };
 
-  module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment, sendCredentials };
+const sendMeetInvite = async(req, res) =>{
+  const {data, time, venue, date} = req.body;
+  
+  for(let i = 0; i<data.length; i++)
+  {
+      const user = await Student.findOne({_id: data[i]});
+      
+      if(user){
+
+        const sendMail = await sendInteractionInvite(user.email, date, time, venue, data[i]);
+
+        if(!sendMail.error)
+        {
+          user.mailSent = true;
+          await user.save();
+        }
+        else{
+          console.log(sendMail.message);
+        }
+      }
+      else{
+        console.log("User doest exist");
+      }
+  }
+}
+
+
+module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment, sendCredentials, sendMeetInvite };
   

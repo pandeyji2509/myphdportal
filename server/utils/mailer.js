@@ -199,4 +199,56 @@ const sendPasswordEmail = async(userEmail, password,department, _id) => {
   }
 }
 
-module.exports = { sendOtpEmail, send_forget_password_email, sendPasswordEmail };
+const sendInteractionInvite = async(userEmail, date , time, venue, _id) => {
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.AUTH_USER,
+      pass: process.env.AUTH_PASS,
+    },
+  });
+
+  try {
+
+    var body_html = `<!DOCTYPE> 
+    <html>
+      <body>
+
+        <p>We are pleased to inform you that you have been selected for offline faculty iteraction meet. <p>
+
+        <p>Meet date: ${date}</p> 
+        <p>Meet venue: ${venue}<p>
+        <p>Meet time: ${time}</p> 
+        
+      </body>
+    </html>`;
+    // Email content
+    let mailOptions = {
+      from: process.env.AUTH_USER, // sender address
+      to: userEmail,
+      subject: 'Offline Meet Invite',
+      html: body_html,
+    };
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+    
+    return {
+      error: false,
+      message: "Meet invite sent successfully",
+      data: {
+        userId: _id,
+      },
+    };
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return{
+      error: true,
+      message: "Couldn't send the meet invite email",
+    }
+  }
+}
+
+
+module.exports = { sendOtpEmail, send_forget_password_email, sendPasswordEmail,sendInteractionInvite };
