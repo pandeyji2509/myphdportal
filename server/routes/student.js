@@ -3,9 +3,25 @@ const router = express.Router();
 
 const { validateToken } = require("../middlewares/validateToken");
 
-const { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, getStudentsByDepartment, getScores, updateScores } = require("../controller/student");
+const {
+  Signup,
+  Login,
+  AuthController,
+  ForgotPassword,
+  verifyOtp,
+  ResetPassword,
+  getStudentsByDepartment,
+  getScores,
+  updateScores,
+} = require("../controller/student");
 
-const { uploadFiles, getListFiles, download } = require("../controller/upload");
+const {
+  uploadFiles,
+  getListFiles,
+  download,
+  downloadById,
+  viewLink,
+} = require("../controller/upload");
 
 router.post("/signup", Signup);
 
@@ -21,9 +37,9 @@ router.get("/getUserData", validateToken, AuthController);
 
 router.get("/getStudentByDep", getStudentsByDepartment);
 
-router.get('/scores/:studentId', getScores);
+router.get("/scores/:studentId", getScores);
 
-router.put('/scores/:studentId', updateScores);
+router.put("/scores/:studentId", updateScores);
 
 // router.patch("/reset",  AuthController.ResetPassword);
 
@@ -32,5 +48,7 @@ router.put('/scores/:studentId', updateScores);
 router.post("/upload", uploadFiles);
 router.get("/files", getListFiles);
 router.get("/files/:name", download);
+router.post("/files", downloadById);
+router.post("/files/view", viewLink);
 
 module.exports = router;

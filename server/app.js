@@ -24,8 +24,8 @@ mongoose
   })
   .then(() => {
     console.log("Database connection Success.");
-    checkSuperAdmin();
-    checkDummyStudent();
+    // checkSuperAdmin();
+    // checkDummyStudent();
   })
   .catch((err) => {
     console.error("Mongo Connection Error", err);
