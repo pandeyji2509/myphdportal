@@ -18,6 +18,8 @@ import AddDepartment from '../../../components/dashboard/admin/addDepartment';
 import ViewStudent from '../../../components/dashboard/admin/ViewStudent';
 
 import { useAppContext } from '../../../context/context';
+import StudentRnS from '../../../components/dashboard/admin/studentsRnS';
+import ViewStudentRnS from '../../../components/dashboard/admin/ViewStudentRnS';
 
 const Home = ({ onAddNew }) => {
   return (
@@ -59,6 +61,8 @@ function AdminDash() {
           <Routes>
             <Route path="/" element={<Home onAddNew={toggleNewNotice} />} />
             <Route path="/students" element={<Student />} />
+            <Route path="/studentsRnS" element={<StudentRnS />} />
+            <Route path="/viewStudentRnS" element={<ViewStudentRnS />} />
             <Route path="/viewStudent" element={<ViewStudent/>} />
             <Route path="/AddDepartment" element={<AddDepartment />} />
             <Route path="/Profile" element={<Profile />} />

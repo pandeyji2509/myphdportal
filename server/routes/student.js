@@ -11,12 +11,14 @@ const {
   verifyOtp,
   ResetPassword,
   getStudentsByDepartment,
+  getAllStudents,
   getScores,
   updateScores,
 } = require("../controller/student");
 
 const {
   uploadFiles,
+  uploadMom,
   getListFiles,
   download,
   downloadById,
@@ -37,6 +39,8 @@ router.get("/getUserData", validateToken, AuthController);
 
 router.get("/getStudentByDep", getStudentsByDepartment);
 
+router.get("/getAllStudents", getAllStudents);
+
 router.get("/scores/:studentId", getScores);
 
 router.put("/scores/:studentId", updateScores);
@@ -46,9 +50,10 @@ router.put("/scores/:studentId", updateScores);
 // router.get("/logout", validateToken, AuthController.Logout);
 
 router.post("/upload", uploadFiles);
+router.post("/uploadMoM", uploadMom);
 router.get("/files", getListFiles);
 router.get("/files/:name", download);
 router.post("/files", downloadById);
-router.post("/files/view", viewLink);
+router.post("/viewfile", viewLink);
 
 module.exports = router;

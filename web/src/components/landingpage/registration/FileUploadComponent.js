@@ -54,6 +54,12 @@ const FileUploadComponent = ({ formik }) => {
           <FileUpload formik={formik} label="noc" />
         </AccordionBody>
       </Accordion>
+      <Accordion open={open === 5} icon={<Icon id={5} open={open} />} className="bg-white">
+        <AccordionHeader onClick={() => handleOpen(5)}>Scholarship Proof (If Any)</AccordionHeader>
+        <AccordionBody>
+          <FileUpload formik={formik} label="scholarship" />
+        </AccordionBody>
+      </Accordion>
     </Fragment>
   );
 };

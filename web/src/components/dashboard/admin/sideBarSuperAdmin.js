@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { DarkModeContext } from '../../../context/DarkModeContext';
-import { FaHome, FaMoneyBillWave, FaEnvelope, FaFileAlt} from "react-icons/fa";
+import { FaHome, FaMoneyBillWave, FaEnvelope, FaFileAlt, FaUserAlt} from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
 import NavButton from '../NavButton';
 
@@ -23,6 +23,12 @@ const SideBarSuperAdmin = () => {
           to="/admin"
           icon={<FaHome className="mr-4" />}
           active={currentPath === "/admin"}
+        />
+        <NavButton
+          text="All Students"
+          to="/admin/studentsRnS"
+          icon={<FaUserAlt className="mr-4" />}
+          active={currentPath === "/admin/studentsRnS"}
         />
          <NavButton
           text="Add Department"

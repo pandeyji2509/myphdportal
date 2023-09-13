@@ -36,9 +36,12 @@ var uploadFiles = multer({ storage: storage }).fields([
     name: "migration",
     maxCount: 1,
   },
-
   {
     name: "noc",
+    maxCount: 1,
+  },
+  {
+    name: "scholarship",
     maxCount: 1,
   },
 ]);

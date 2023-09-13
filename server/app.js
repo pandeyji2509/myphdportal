@@ -8,7 +8,6 @@ const stats = require("./routes/stats");
 const Admin = require("./models/admin");
 const Student = require("./models/student");
 const createSuperAdmin = require("./utils/createSuperAdmin");
-const createDummyStudent = require("./utils/createDummyStudent");
 const router = require("./routes/student");
 
 const corsOptions = {
@@ -24,8 +23,7 @@ mongoose
   })
   .then(() => {
     console.log("Database connection Success.");
-    // checkSuperAdmin();
-    // checkDummyStudent();
+    checkSuperAdmin();
   })
   .catch((err) => {
     console.error("Mongo Connection Error", err);
@@ -60,20 +58,5 @@ async function checkSuperAdmin() {
     }
   } catch (error) {
     console.error("Error checking super admin:", error);
-  }
-}
-
-async function checkDummyStudent() {
-  try {
-    const dummyStudent = await Student.findOne({ email: "nk09.cric@gmail.com" });
-
-    if (!dummyStudent) {
-      // Create the super admin if it doesn't exist
-      await createDummyStudent();
-    } else {
-      console.log("Dummy Student already exists.");
-    }
-  } catch (error) {
-    console.error("Error checking dummy student:", error);
   }
 }

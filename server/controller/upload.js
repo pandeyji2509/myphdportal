@@ -1,4 +1,5 @@
 const upload = require("../middlewares/upload");
+const uploadMoM = require("../middlewares/uploadMoM");
 const dbConfig = require("../config/db");
 const { collection } = require("../models/student");
 const Student = require("../models/student");
@@ -12,6 +13,37 @@ const url = dbConfig.url;
 const baseUrl = "http://localhost:8000/files/";
 
 const mongoClient = new MongoClient(url);
+
+const uploadMom = async (req, res) => {
+  try {
+    await uploadMoM(req, res);
+    const file = req.files;
+
+    console.log("generated scorecard", req.files.mom[0].id);
+    
+    if (req.files === undefined) {
+      return res.send({
+        message: 'You must select a file.',
+      });
+    }
+
+    await Student.findOneAndUpdate(
+      { email: req.body.email },
+      { $set: { mom: req.files.mom[0].id } },
+    );
+
+    return res.send({
+      message: 'Additional file has been uploaded.',
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.send({
+      message: `Error when trying to upload additional file: ${error}`,
+    });
+  }
+};
 
 const uploadFiles = async (req, res) => {
   try {
@@ -42,6 +74,7 @@ const uploadFiles = async (req, res) => {
         noc: file.noc[0].id,
         eligibility: file.eligibility[0].id,
         migration: file.migration[0].id,
+        scholarship: file.scholarship[0].id,
       },
       Student
     );
@@ -183,23 +216,29 @@ const downloadById = async (req, res) => {
 const viewLink = async (req, res) => {
   try {
     await mongoClient.connect();
-
+    
     const database = mongoClient.db(dbConfig.database);
     const images = database.collection(dbConfig.imgBucket + ".files");
 
     const cursor = images.find({});
+
 
     if ((await collection.countDocuments()) === 0) {
       return res.status(500).send({
         message: "No files found!",
       });
     }
+
+    console.log(await collection.countDocuments());
     let fileInfos;
+    console.log("Given", req.body.id);
     await cursor.forEach((doc) => {
       // console.log(doc._id, req.params.id);
-      if (doc._id == req.body.id) fileInfos = baseUrl + doc.filename;
+      console.log(doc._id.toString());
+      if (doc._id.toString() == req.body.id) fileInfos = baseUrl + doc.filename;
     });
 
+    console.log("file", fileInfos);
     return res.status(200).json({ filelink: fileInfos });
   } catch (error) {
     return res.status(500).send({
@@ -210,6 +249,7 @@ const viewLink = async (req, res) => {
 
 module.exports = {
   uploadFiles,
+  uploadMom,
   getListFiles,
   download,
   downloadById,

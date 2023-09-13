@@ -41,6 +41,8 @@ const studentSchema = new Schema(
     migration: String,
     eligibility: String,
     dmc: String,
+    scholarship: String,
+    mom: String,
   },
   { timestamps: true }
 );

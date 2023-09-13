@@ -16,6 +16,7 @@ const scoresSchema = new Schema(
       isEligibilityTestApproved: { type: Boolean, default: false },
       isMigrationApproved: { type: Boolean, default: false },
       isNOCApproved: { type: Boolean, default: false },
+      isScholarshipApproved: { type: Boolean, default: false },
       finalApproval: { type: Boolean, default: false },
     },
     { timestamps: true }

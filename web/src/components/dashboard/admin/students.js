@@ -105,20 +105,20 @@ const Student = () => {
     console.log(selectedStudentIds, interactionDate, interactionTime, venue);
     setShowPopup(false);
     try {
-      const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/sendMeetInvite`,
-      { data  : selectedStudentIds,
-        time  : interactionTime,
-        venue : venue,
-        date  : interactionDate },
-      );
+        message.success("Emails sent successfully");
+        const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/sendMeetInvite`,
+        { data  : selectedStudentIds,
+          time  : interactionTime,
+          venue : venue,
+          date  : interactionDate },
+        );
 
-      console.log(res);
+        console.log(res);
 
-      if(res.data.error){
-        message.error("Couldn't send Email");
-        return;
-      }
-      message.success("Emails sent successfully");
+        if(res.data.error){
+          message.error("Couldn't send Email");
+          return;
+        }
       } catch (error) {
         console.log(error)
     }

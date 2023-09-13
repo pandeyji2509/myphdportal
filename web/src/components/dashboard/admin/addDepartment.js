@@ -16,6 +16,7 @@ function AddDepartment() {
           console.log(res);
           if (res.data.success) {
             message.success(res.data.message);
+            formik.resetForm();
           }
           else
           {

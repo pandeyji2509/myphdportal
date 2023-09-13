@@ -8,7 +8,6 @@ const FileUpload = ({ formik, label }) => {
 
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
-    // console.log("files", files[0]);
     formik.setFieldValue(label, files[0]);
     setSelectedFiles(files);
   };

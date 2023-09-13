@@ -128,6 +128,7 @@ function Form() {
       migration: "",
       noc: "",
       eligibility: "",
+      scholarship: "",
     },
     validationSchema: Yup.object().shape({
       email: Yup.string().email('Invalid email address').required('Required'),

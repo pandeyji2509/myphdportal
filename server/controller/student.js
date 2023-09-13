@@ -341,6 +341,15 @@ const getStudentsByDepartment = async (req, res) => {
   }
 };
 
+const getAllStudents = async (req, res) => {
+  try {
+    const students = await Student.find();
+    return res.status(200).json({ students });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error fetching students', error: error.message });
+  }
+};
+
 const getScores = async (req, res) => {
   const { studentId } = req.params;
   try {
@@ -356,8 +365,10 @@ const getScores = async (req, res) => {
 
 const updateScores = async (req, res) => {
   const { studentId } = req.params;
-  const updatedScores = req.body;
+  const updatedScores = req.body.scores;
+  const flag = req.body.flag;
   
+  console.log(flag);
   updatedScores.overall = updatedScores.bsc + updatedScores.msc + updatedScores.interaction + updatedScores.proposal + updatedScores.scholarship;
   
   try {
@@ -369,11 +380,28 @@ const updateScores = async (req, res) => {
     );
     
     // Update the Student document with the overall marks and approval status
-    const updatedStudent = await Student.findByIdAndUpdate(
-      studentId,
-      { overallMarks: scores.overall},
-      { new: true }
-    );
+    let updatedStudent;
+    if(flag){
+      updatedStudent = await Student.findByIdAndUpdate(
+        studentId,
+        { 
+          overallMarks: scores.overall,
+          isApproved: true,
+        },
+        { new: true }
+      );
+      console.log(" flag is true");
+    }
+    else{
+      updatedStudent = await Student.findByIdAndUpdate(
+        studentId,
+        { 
+          overallMarks: scores.overall, 
+        },
+        { new: true }
+      );
+      console.log(" flag is false");
+    }
 
     if (!scores || !updatedStudent) {
       return res.status(404).json({ message: "Scores not found for this student" });
@@ -387,4 +415,4 @@ const updateScores = async (req, res) => {
 
 
 
-module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, getStudentsByDepartment, getScores, updateScores };
+module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, getStudentsByDepartment, getAllStudents, getScores, updateScores };
