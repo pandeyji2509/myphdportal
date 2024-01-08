@@ -199,6 +199,55 @@ const sendPasswordEmail = async(userEmail, password,department, _id) => {
   }
 }
 
+const sendFeeRequest = async(userEmail, firstName, enrollmentNumber, department, _id) => {
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.AUTH_USER,
+      pass: process.env.AUTH_PASS,
+    },
+  });
+
+  try {
+
+    var body_html = `<!DOCTYPE> 
+    <html>
+      <body>
+        <p> Dear ${firstName}, </p>
+        <p>Your application has been approved by ${department}. <p>
+
+        <p>You can now pay the enrollment fee and upload the receipt of the same on the portal for registration.<p>
+        <p>Your Enrollment Number : <b>${enrollmentNumber}</b> </p> 
+      </body>
+    </html>`;
+    // Email content
+    let mailOptions = {
+      from: process.env.AUTH_USER, // sender address
+      to: userEmail,
+      subject: 'Fee Upload - PhD Registration',
+      html: body_html,
+    };
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+    
+    return {
+      error: false,
+      message: "Request email sent successfully",
+      data: {
+        userId: _id,
+      },
+    };
+  } catch (error) {
+    console.error('Error sending request:', error);
+    return{
+      error: true,
+      message: "Couldn't send the request email",
+    }
+  }
+}
+
 const sendInteractionInvite = async(userEmail, date , time, venue, _id) => {
 
   const transporter = nodemailer.createTransport({
@@ -251,4 +300,4 @@ const sendInteractionInvite = async(userEmail, date , time, venue, _id) => {
 }
 
 
-module.exports = { sendOtpEmail, send_forget_password_email, sendPasswordEmail,sendInteractionInvite };
+module.exports = { sendOtpEmail, send_forget_password_email, sendPasswordEmail,sendInteractionInvite, sendFeeRequest };

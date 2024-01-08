@@ -4,21 +4,8 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema(
   {
     email: { type: String, required: true, unique: true },
-    verified: { type: Boolean, default: false },
     password: { type: String, required: true },
-    department: { type: String },
-    faculty: { type: String },
-    firstName: { type: String },
-    lastName: { type: String },
-    gender: { type: String },
-    fatherName: { type: String },
-    motherName: { type: String },
-    permaddress: { type: String },
-    localaddress: { type: String },
-    aadhar: { type: Number },
-    telNumber: { type: Number },
-    state: { type: String },
-    regNumber: { type: String },
+    role: { type: String, required: true },
     resetPasswordToken: { type: String },
   },
   {
@@ -29,5 +16,5 @@ const userSchema = new Schema(
   }
 );
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;

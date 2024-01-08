@@ -2,11 +2,10 @@ import React from 'react';
 import { useFormik } from 'formik';
 import {message} from 'antd';
 import axios from "axios";
-import { faculties, departmentOptions} from '../../../constants/formConstants';
+import { faculties, departmentOptions} from '../../../../constants/formConstants';
 function AddDepartment() {
 
   const registerDep = async (body) => {
-    console.log("inside");
     try {
         const res = await axios.post(
             `${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/addDep`,
@@ -33,6 +32,7 @@ function AddDepartment() {
       depEmail: '',
       name: '',
       password: '',
+      subjects: 'Subjects',
     },
     onSubmit: () => {
       console.log('submitting', formik.values);

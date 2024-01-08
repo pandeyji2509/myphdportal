@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { FaEye, FaEnvelope, FaFilePdf, FaCheck } from "react-icons/fa";
+import {  FaFilePdf } from "react-icons/fa";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
-import { useAppContext } from '../../../context/context'
+//import { useAppContext } from '../../../../context/context'
 import axios from 'axios';
-import EmailPopup from "./EmailPopup";
+import EmailPopup from "../EmailPopup";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { setStudent } from "../../../redux/features/selectedStudentSlice";
+import { setStudent } from "../../../../redux/features/selectedStudentSlice";
 import {RiMailSendFill} from 'react-icons/ri';
 import {AiOutlineDownload, AiFillCheckCircle} from 'react-icons/ai';
 import {message} from 'antd';
-import { personal, master, academic, other } from "../../../constants/pdfData";
+import { personal, master, academic, other } from "../../../../constants/pdfData";
+import { MdError } from "react-icons/md";
 
 const Student = () => {
   const dispatch = useDispatch();
@@ -20,16 +21,16 @@ const Student = () => {
   const {user} = useSelector(state => state.user);
   var departmentName;
   const [selectAll, setSelectAll] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
   const [showPopup, setShowPopup] = useState(false); // Added state for popup visibility
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
+  // const [selectedItems, setSelectedItems] = useState([]);
 
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [venue, setVenue] = useState("");
 
   if(user){
-    departmentName = user.departmentName;
+    departmentName = user.depName;
   }
 
   const [students, setStudents] = useState([]);
@@ -74,8 +75,9 @@ const Student = () => {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/student/getStudentByDep`, {
         params: { department: departmentName },
       });
-      console.log(response.data.students);
-      setStudents(response.data.students);
+      console.log(response);
+      console.log(response.data.stu);
+      setStudents(response.data.stu);
     } catch (error) {
       console.error('Error fetching students:', error);
     }
@@ -253,9 +255,9 @@ const renderStudentDetailsToPDF = (doc, student) => {
       </div>
 
       {students.sort((a, b) => b.overallMarks - a.overallMarks).map((student, index) => (
-        <div className={`my-2 flex ${(student && student.isApproved) ? "bg-blue-100" : "bg-white"} shadow-sm items-center rounded-lg py-2 px-3 text-sm`}>
+        <div className={`my-2 flex ${(student && student.depApproved) ? "bg-blue-100" : "bg-white"} shadow-sm items-center rounded-lg py-2 px-3 text-sm`}>
           <div className="w-1/12 flex items-center" key={index+1}>
-            <div className={`ml-1 flex items-center justify-center rounded-full h-8 w-8  ${(student && student.isApproved) ? "hover:bg-blue-300" : "hover:bg-gray-200"} transition-colors`}>
+            <div className={`ml-1 flex items-center justify-center rounded-full h-8 w-8  ${(student && student.depApproved) ? "hover:bg-blue-300" : "hover:bg-gray-200"} transition-colors`}>
               <input
                 type="checkbox"
                 className="h-4 w-4 rounded-lg cursor-pointer"
@@ -269,7 +271,7 @@ const renderStudentDetailsToPDF = (doc, student) => {
           <div className="ml-4 w-2/12">{student.firstName + " " + student.lastName} </div>
           <div className="w-2/12">{student.subject}</div>
           <div className="w-1/12">{student.gender}</div>
-          <div className="w-1/12">{student.mobileNumber}</div>
+          <div className="w-1/12">{student.mobile}</div>
           <div className="w-3/12 pl-4">{student.email}</div>
           <div className="w-1/12">{student.overallMarks.toFixed(2)}</div>
           <div className="w-2/12 flex items-center justify-center">
@@ -280,8 +282,10 @@ const renderStudentDetailsToPDF = (doc, student) => {
                 </button>
               </div>
               <div className="w-1/5 flex justify-center">
-                {student && student.isApproved &&
+                {student && student.depApproved &&
                 <AiFillCheckCircle className="text-2xl text-green-500"/>}
+                {student && student.flag &&
+                <MdError className="text-2xl text-red-500"/>}
               </div>
           </div>
         </div>

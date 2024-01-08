@@ -4,12 +4,14 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 
 import Greeting from "../../../components/dashboard/student/greeting";
-import SideBar from "../../../components/dashboard/student/sideBar";
+import SideBar from "../../../components/dashboard/sideBar";
 import TopBar from "../../../components/dashboard/student/topBar";
 import MainBody from "../../../components/dashboard/student/mainBody";
 import Profile from "../../../components/dashboard/student/Profile";
 import NoticeBoard from "../../../components/dashboard/student/NoticeBoard";
 import FeePortal from "../../../components/dashboard/student/FeePortal";
+import { student } from '../../../constants/sideBar';
+
 import { useAppContext } from '../../../context/context';
 
 const Home = ({ onAddNew }) => {
@@ -24,22 +26,14 @@ const Home = ({ onAddNew }) => {
 function StudentDash() {
   const { darkMode } = useContext(DarkModeContext);
   const [showNewNotice, setShowNewNotice] = useState(false);
-  const { state, isUserAuthenticated } = useAppContext();
-  const {user} = useSelector(state => state.user);
-  //console.log("HELLO", state);
-  console.log("isauthenticated?", isUserAuthenticated());
-  console.log("user", user);
 
   const toggleNewNotice = () => {
     setShowNewNotice(!showNewNotice);
   };
 
-  const location = useLocation();
-  const currentPath = location.pathname;
-
   return (
     <div className={`flex font-["IBM_Plex_Sans"] h-screen ${darkMode ? "bg-gray-900" : "bg-[#F8F9FF]"}`}>
-      <SideBar currentPath={currentPath} />
+      <SideBar data={student} />
 
     {/* <SideBarSuperAdmin currentPath={currentPath} /> */}
       <div className="flex-1 flex flex-col">

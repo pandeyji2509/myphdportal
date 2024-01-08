@@ -22,6 +22,7 @@ const NavBar = () => {
         <div className="justify-end items-center text-md font-medium text-white w-1/2 flex">
           <Link to ="/"><div className="mx-4 hover:underline hover:underline-offset-4 p-2 px-4 rounded-md"> Home</div></Link>
           <Link to ="/"><div className="mx-4 hover:underline hover:underline-offset-4 p-2 px-4 rounded-md">About Us</div></Link>
+          <Link to="/feeupload"><div className="mx-4 hover:underline hover:underline-offset-4 p-2 px-4 rounded-md">Upload Fee</div></Link>
           <Link to="/notice"><div className="mx-4 hover:underline hover:underline-offset-4 p-2 px-4 rounded-md">Notices</div></Link>
           <Link to ="/"><div className="mx-4 hover:underline hover:underline-offset-4 p-2 px-4 rounded-md">Contact</div></Link>
         </div>

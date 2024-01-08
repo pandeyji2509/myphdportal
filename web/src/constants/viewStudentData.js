@@ -3,7 +3,7 @@ export const academic = {
     department: "Department",
     subject: "Subject",
     email: "Email ID",
-    mobileNumber: "Mobile",
+    mobile: "Mobile",
   };
 
 export const personal = {

@@ -89,28 +89,29 @@ function Form() {
     if (shouldSubmit) {
       // Proceed with form submission
       console.log("submitting", formik.values);
-      console.log(formik.values);
       registerUser(formik.values);
     }
   };
 
   const formik = useFormik({
     initialValues: {
-      faculty: "",
-      department: "",
-      subject: "",
+      email: "",
       firstName: "",
       lastName: "",
+      subject: "",
       gender: "",
       fatherName: "",
       motherName: "",
-      mobileNumber: "",
+      mobile: "",
       permaddress: "",
       localaddress: "",
       aadhar: "",
-      telNumber: "",
+      tel: "",
       state: "",
-      email: "",
+
+      faculty: "",
+      department: "",
+      
       masterDegree: "",
       masterYear: "",
       masterUniversity: "",
@@ -151,11 +152,11 @@ function Form() {
     { label: 'Gender', name: 'gender', placeholder: 'Select Gender', type: 'select', options: genderOptions },
     { label: "Father's Name", name: 'fatherName', placeholder: "Father's Name", type: 'text' },
     { label: "Mother's Name", name: 'motherName', placeholder: "Mother's Name", type: 'text' },
-    { label: 'Mobile Number', name: 'mobileNumber', placeholder: 'Mobile Number', type: 'text' },
+    { label: 'Mobile Number', name: 'mobile', placeholder: 'Mobile Number', type: 'text' },
     { label: 'Permanent Address', name: 'permaddress', placeholder: 'Permanent Address', type: 'text' },
     { label: 'Local Address', name: 'localaddress', placeholder: 'Local Address', type: 'text' },
     { label: 'Aadhar Number', name: 'aadhar', placeholder: 'Aadhar Number', type: 'text' },
-    { label: 'Telephone', name: 'telNumber', placeholder: 'Telephone', type: 'text' },
+    { label: 'Telephone', name: 'tel', placeholder: 'Telephone', type: 'text' },
     { label: 'State', name: 'state', placeholder: 'Select State', type: 'select', options: stateOptions },
     { label: 'Email', name: 'email', placeholder: 'Email', type: 'text' },
     { label: "Master's Degree", name: 'masterDegree', placeholder: "Select", type: 'select', options: masterDegreeOptions },

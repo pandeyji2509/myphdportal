@@ -3,19 +3,17 @@ const router = express.Router();
 
 const { validateToken } = require("../middlewares/validateToken");
 
-const { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment, sendCredentials, sendMeetInvite } = require("../controller/admin");
+const { AuthController, AddDepartment, sendCredentials, sendMeetInvite, raiseObjection, getObjections, removeObjection, approveDui, feeRequest } = require("../controller/admin");
 
-router.post("/signup", Signup);
+//router.post("/login", Login);
 
-router.post("/login", Login);
-
-router.post("/forgot-password", ForgotPassword);
+//router.post("/forgot-password", ForgotPassword);
 
 router.post("/addDep", AddDepartment);
 
-router.post("/verifyOtp", verifyOtp);
+//router.post("/verifyOtp", verifyOtp);
 
-router.post("/reset-password", ResetPassword);
+//router.post("/reset-password", ResetPassword);
 
 router.get("/getUserData", validateToken, AuthController);
 
@@ -25,6 +23,16 @@ router.get("/getUserData", validateToken, AuthController);
 
 router.post("/sendCredentials", sendCredentials);
 
+router.post("/feeRequest", feeRequest);
+
 router.post("/sendMeetInvite", sendMeetInvite );
+
+router.put("/raiseObj/:studentId", raiseObjection);
+
+router.put("/removeObj/:studentId", removeObjection);
+
+router.put("/approveDui/:studentId", approveDui);
+
+router.get("/getObjections/:studentId", getObjections);
 
 module.exports = router;

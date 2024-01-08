@@ -4,12 +4,7 @@ const router = express.Router();
 const { validateToken } = require("../middlewares/validateToken");
 
 const {
-  Signup,
-  Login,
   AuthController,
-  ForgotPassword,
-  verifyOtp,
-  ResetPassword,
   getStudentsByDepartment,
   getAllStudents,
   getScores,
@@ -23,17 +18,18 @@ const {
   download,
   downloadById,
   viewLink,
+  uploadFee,
 } = require("../controller/upload");
 
-router.post("/signup", Signup);
+// router.post("/signup", Signup);
 
-router.post("/login", Login);
+// router.post("/login", Login);
 
-router.post("/forgot-password", ForgotPassword);
+// router.post("/forgot-password", ForgotPassword);
 
-router.post("/verifyOtp", verifyOtp);
+// router.post("/verifyOtp", verifyOtp);
 
-router.post("/reset-password", ResetPassword);
+// router.post("/reset-password", ResetPassword);
 
 router.get("/getUserData", validateToken, AuthController);
 
@@ -51,6 +47,7 @@ router.put("/scores/:studentId", updateScores);
 
 router.post("/upload", uploadFiles);
 router.post("/uploadMoM", uploadMom);
+router.post("/uploadFee", uploadFee);
 router.get("/files", getListFiles);
 router.get("/files/:name", download);
 router.post("/files", downloadById);

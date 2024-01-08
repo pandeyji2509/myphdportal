@@ -22,8 +22,6 @@ export default function ProtectAdminRoute({children}) {
             });
 
             if(res.data.success){
-                console.log("Result", res);
-                //we passed user info in the authController function in userCtrl file, we are fetching that data and updating the state of user here
                 dispatch(setUser(res.data.data));
                 
             }else{

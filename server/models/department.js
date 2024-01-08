@@ -3,10 +3,12 @@ const Schema = mongoose.Schema;
 
 const departmentSchema = new Schema(
   {
+    email: {type: String },
     depName: { type: String, required: true },
     faculty: { type: String },
-    depEmail: { type: String, required: true },
     subjects: { type: String },
+    adminName: { type: String },
+    mobile: { type: String },
   }
 );
 

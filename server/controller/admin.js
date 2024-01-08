@@ -1,445 +1,111 @@
-const { v4: uuid } = require("uuid");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const { generateJwt } = require("../utils/generateJwt");
-const { hashPassword, comparePassword } = require("../utils/bycrpt");
-const { createUser, updateUser } = require("../services/user");
-const { sign_up } = require("../services/signup");
-const { log_in } = require("../services/login");
-const { sendPasswordEmail, sendInteractionInvite } = require("../utils/mailer");
+const { hashPassword } = require("../utils/bycrpt");
+const { createUser } = require("../services/user");
+const { sendPasswordEmail, sendInteractionInvite, sendFeeRequest } = require("../utils/mailer");
 
-const Admin = require("../models/admin");
+const User = require("../models/user");
 const Student = require("../models/student");
 const Department = require("../models/department");
 const Scores = require("../models/scores");
-
-
-
-
-const Signup = async (req, res) => {
+const Admin = require("../models/admin");
+const StudentRegDetails = require("../models/regDetails");
+  
+const AuthController = async (req, res) => {
   try {
-    console.log(body);
-    //Check if the email has been already registered.
-    var user = await Admin.findOne({
-      email: body.email,
+      const user = await User.findById({ _id: req.body.userId });
+      user.password = undefined;
+
+      if (!user) {
+          return res.status(200).send({ message: "User not found", success: false });
+      }
+
+      let userData;
+      let userObj;
+      if (user.role === "admin") {
+        userData = await Admin.findById({ _id: req.body.userId });
+        userObj = {
+          _id: user._id,
+          role: user.role,
+          email: user.email,
+          name: userData.name,
+          adminName: userData.adminName,
+          mobile: userData.mobile,
+          user: userData.user,
+        };
+      } else if (user.role === "department") {
+        userData = await Department.findById({ _id: req.body.userId });
+        userObj = {
+          _id: user._id,
+          role: user.role,
+          email: user.email,
+          depName: userData.depName,
+          faculty: userData.faculty,
+          subjects: userData.subjects,
+          adminName: userData.adminName,
+          mobile: userData.mobile,
+        };
+      }
+
+      res.status(200).send({
+          success: true,
+          data: userObj,
+      });
+
+  } catch (error) {
+      console.log(error);
+      res.status(200).send({ message: "Auth failed", success: false, error });
+  }
+};
+  
+const AddDepartment = async (req, res) => {
+  try {
+
+    var user = await Department.findOne({
+      depName: req.body.depName,
     });
 
     if (user) {
-      return res.status(500).json({
-        error: true,
-        message: "Email is already in use",
+      return res.status(200).send({
+        success: false,
+        message: "Department already added",
       });
     }
 
-  //   const hash = await hashPassword(req.body.password);
+    const depData = {
+      depName: req.body.depName,
+      faculty: req.body.faculty,
+      email: req.body.depEmail,
+      subjects: req.body.subjects,
+      adminName: req.body.name,
+      mobile: '9876543210',
+    };
 
-    const expiryTime = "1h";
+    const depObj = await Department.create(depData);
 
-    const secret = process.env.SECRET;
+    const userData = {
+      _id: depObj._id,
+      password: req.body.password,
+      role: "department",
+      email: req.body.depEmail,
+    };
+    
+    await createUser(userData, User);
 
-  //   let code = Math.floor(100000 + Math.random() * 900000);
-
-  //   let expiry = Date.now() + 60 * 1000 * 15; //15 mins in ms
-
-    const userObj = await createUser(body, Admin);
-
-  //   const sendCode = await sendOtpEmail(req.body.email, userObj._id);
-
-  //   if (sendCode.error) {
-  //     return res.status(500).json({
-  //       error: true,
-  //       message: "Couldn't send verification email.",
-  //     });
-  //   }
-
-  //   const refreshToken = await generateJwt(req.body.email, userObj._id, expiryTime, secret);
-
-  //   res.cookie("jwt", refreshToken, {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: "None",
-  //     maxAge: 24 * 60 * 60 * 1000,
-  //   });
-
-    const accessToken = await generateJwt(req.body.email, userObj._id, expiryTime, secret);
-    //Check if referred and validate code.
-
-    return res.status(200).json({
+    return res.status(200).send({
       success: true,
       message: "Registration Success",
-      refreshToken,
-      accessToken,
-      userObj,
     });
   } catch (error) {
-    console.error("signup-error", error);
-    return res.status(500).json({
-      error: true,
+    console.error(error);
+    return res.status(200).send({
+      success: false,
       message: "Cannot Register",
     });
   }
 };
-  
-const Login = async (req, res) => {
-  try {
-    console.log(req.body);
 
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(200).send({
-        message: "Cannot authorize user", 
-        success: false});
-    }
-
-    //1. Find if any account with that email exists in DB
-    const user = await Admin.findOne({ email: email });
-
-    // NOT FOUND - Throw error
-    if (!user) {
-      return res.status(200).send({
-        message: "Account Not Found", 
-        success: false});
-    }
-
-    //2. Throw error if account is not activated
-    // if (!user.active) {
-    //   return res.status(400).json({
-    //     error: true,
-    //     message: "You must verify your email to activate your account",
-    //   });
-    // }
-
-    //3. Verify the password is valid
-    const isValid = await comparePassword(password, user.password);
-
-    if (!isValid) {
-      return res.status(200).send({
-        message: "Invalid Credentials", 
-        success: false});
-    }
-
-    //Generate Access token
-
-    const expiryTime = "1h";
-    const secret = process.env.JWT_SECRET;
-
-    const accessToken = await generateJwt(user.email, user._id, expiryTime, secret);
-
-    const refreshToken = await generateJwt(user.email, user._id, expiryTime, secret);
-
-    res.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    //Success
-    return res.send({
-      success: true,
-      message: "User logged in successfully",
-      accessToken,
-      user,
-    });
-  } catch (err) {
-    console.error("Login error", err);
-    return res.status(500).json({
-      error: true,
-      message: "Couldn't login. Please try again later.",
-    });
-  }
-};
-  
-  const AuthController = async(req,res) => {
-    try {
-        //finding user in the database with the userId which we created in the req.body in the authMiddleware
-        const user = await Admin.findById({_id: req.body.userId});
-        //we dont want to return password to the browser, so will hide it after fetching it from the database
-        user.password = undefined;
-        if(!user){
-            return res.status(200).send({message:"User not found", success:false});
-        }
-        
-        //sending every data about the user from the database to the frontend
-        else{
-            res.status(200).send({
-                success:true,
-                data: user,
-            });
-        }
-  
-    } catch (error) {
-        console.log(error);
-        res.status(200).send({message: "Auth failed", success: false, error});
-    }
-  };
-  
-  const ForgotPassword = async (req, res) => {
-    try {
-      const { email } = req.body;
-  
-      // user doesn't enter email.
-      if (!email) {
-        return res.send({
-          status: 400,
-          error: true,
-          message: "Please enter email.",
-        });
-      }
-      const user = await Admin.findOne({
-        email: email,
-      });
-  
-      // user email not found in database
-      if (!user) {
-        return res.send({
-          status: 400,
-          error: true,
-          message:
-            "Email Address is not found in our database, please sign up to the portal.",
-        });
-      }
-  
-      // if user email exists in database generate a one time link for 15mins.
-  
-      if(user){
-  
-        // link generating
-        const secret = process.env.SECRET + user.password;
-        const expiryTime = "1m";
-        const token = await generateJwt(user.email, user._id, expiryTime, secret);
-        const link = 'http://localhost:3000/reset-password';
-  
-        // sending email
-  
-        let response = await send_forget_password_email(user.email, user._id, link);
-  
-        if (response.error) {
-          return res.status(500).json({
-            error: true,
-            message: "Couldn't send mail. Please try again later.",
-          });
-        };
-  
-        // saving token in database
-  
-        user.resetPasswordToken = token;
-        await user.save();
-  
-        return res.send({
-          success: true,
-          message:
-            "If that email address is in our database, we will send you an email to reset your password",
-        });
-  
-      }
-    } catch (error) {
-      console.error("forgot-password-error", error);
-      return res.status(500).json({
-        error: true,
-        message: error.message,
-      });
-    }
-  };
-  
-  const ResetPassword = async (req, res) => {
-    try {
-      const { newPassword, confirmPassword, email } = req.body;
-  
-      if (!email || !newPassword || !confirmPassword) {
-        return res.status(403).json({
-          error: true,
-          message: "Couldn't process request. Please provide all mandatory fields",
-        });
-      }
-  
-      const user = await Admin.findOne({
-        email: email
-      });
-  
-      const secret = process.env.SECRET + user.password;
-      jwt.verify(user.resetPasswordToken, secret, async (err, verifiedJwt) => {
-        if(err){
-          return res.send({
-            error: true,
-            message: "Password reset token is invalid or has expired.",
-          });
-        }else{
-          if (newPassword !== confirmPassword) {
-            return res.status(400).json({
-              error: true,
-              message: "Passwords didn't match",
-            });
-          }
-          const hash = await hashPassword(req.body.newPassword);
-          user.password = hash;
-          user.resetPasswordToken = null;
-      
-          await user.save();
-      
-          return res.send({
-            success: true,
-            message: "Password has been changed",
-          });
-        }});
-    } catch (error) {
-      console.error("reset-password-error", error);
-      return res.status(500).json({
-        error: true,
-        message: error.message,
-      });
-    }
-  };
-  
-  const Logout = async (req, res) => {
-    try {
-      const { id } = req.decoded;
-  
-      let user = await Admin.findOne({ userId: id });
-  
-      user.accessToken = "";
-  
-      await user.save();
-  
-      return res.send({ success: true, message: "User Logged out" });
-    } catch (error) {
-      console.error("user-logout-error", error);
-      return res.stat(500).json({
-        error: true,
-        message: error.message,
-      });
-    }
-  };
-  
-  const verifyOtp = async (req, res) => {
-    try {
-      console.log(req.body);
-  
-      const userId = req.body.id;
-      const body_otp = req.body.otp;
-  
-      // console.log(userId);
-  
-      if (!userId && !body_otp) {
-        return res.status(500).json({
-          status: "failure",
-          message: "Empty otp is not allowed",
-        });
-      }
-  
-      const userOtpRecords = await otpModel.find({ entityId: userId }).sort({ createdAt: -1 });
-  
-      if (userOtpRecords.length < 0) {
-        res.status(500).json({
-          status: "failure",
-          message: "Account Record doesnt exist . Please login or signin",
-        });
-      }
-  
-      // console.log(userOtpRecords);
-  
-      const { expiresAt, otp } = userOtpRecords[0];
-  
-      // if (expiresAt < Date.now()) {
-      //   await otpVerificationModel.deleteMany({ entityId: userId });
-      //   return res.status(500).json({
-      //     status: "failure",
-      //     message: "Code has expired . Please request again",
-      //   });
-      // }
-  
-      console.log(body_otp, otp);
-  
-      const validOtp = await bcrypt.compare(body_otp, otp);
-  
-      console.log(validOtp);
-  
-      if (!validOtp) {
-        return res.status(500).json({
-          status: "failure",
-          message: "Invalid OTP",
-        });
-      }
-  
-      await updateUser({ _id: userId }, { verified: true }, Admin);
-  
-      await otpModel.deleteMany({ _id: userId });
-  
-      return res.status(200).json({
-        status: "success",
-        message: "User is verified",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  
-  const resendOtp = async (req, res) => {
-    try {
-      const sendCode = await sendOtpEmail(req.body.email, userObj._id);
-  
-      if (sendCode.error) {
-        return res.status(500).json({
-          error: true,
-          message: "Couldn't send verification email.",
-        });
-      }
-    } catch (error) {}
-  };
-  
-  const AddDepartment = async (req, res) => {
-    try {
-  
-      var user = await Department.findOne({
-        depName: req.body.depName,
-      });
-  
-      if (user) {
-        return res.status(200).send({
-          success: false,
-          message: "Department already added",
-        });
-      }
-  
-      const depData = {
-        depName: req.body.depName,
-        faculty: req.body.faculty,
-        depEmail: req.body.depEmail,
-        subjects: req.body.subjects,
-      };
-  
-      const depObj = await Department.create(depData);
-      console.log("Dep Obj", depObj);
-  
-      const userData = {
-        password: req.body.password,
-        role: "admin",
-        name: req.body.name,
-        email: req.body.depEmail,
-        department: depObj._id,
-        departmentName: req.body.depName,
-      };
-      
-      const adminObj = await createUser(userData, Admin);
-      console.log("Admin Obj", adminObj);
-      return res.status(200).send({
-        success: true,
-        message: "Registration Success",
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(200).send({
-        success: false,
-        message: "Cannot Register",
-      });
-    }
-  };
-
-
-  // Function to generate a random password with at least one uppercase, one lowercase, and one numeric character,
+// Function to generate a random password with at least one uppercase, one lowercase, and one numeric character,
 // and concatenate it with the first three non-whitespace characters of the first name
 const generatePassword = (firstName) => {
   const uppercaseCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -493,12 +159,9 @@ const generatePassword = (firstName) => {
   return password;
 };
 
-
-
 const sendCredentials = async(req,res) =>{
   try {
-    console.log(req.body.id);
-    const user = await Student.findOne({_id: req.body.id});
+    const stu = await Student.findOne({_id: req.body.id});
     const score = await Scores.findOne({_id: req.body.id});
 
     if(!score || !score.finalApproval){
@@ -508,13 +171,13 @@ const sendCredentials = async(req,res) =>{
       })
     }
 
-    if(user){
-      const firstName = user.firstName;
+    if(stu){
+      const firstName = stu.firstName;
 
       //password generated
       const password = generatePassword(firstName);
-
-      const sendPassword = await sendPasswordEmail(user.email, password, user.department, user._id);
+      const dep = await Department.findOne({_id: stu.department});
+      const sendPassword = await sendPasswordEmail(stu.email, password, dep.depName, stu._id);
 
       if (sendPassword.error) {
         return res.status(500).send({
@@ -527,10 +190,17 @@ const sendCredentials = async(req,res) =>{
       const hash = await hashPassword(password);
 
       //hashed password stored in the db
-      user.isApproved = true;
+      stu.isApproved = true;
 
-      user.password = hash;
-      await user.save();
+      const user = {
+        _id: stu._id,
+        email: stu.email,
+        password: hash,
+        role: "student",
+      };
+      
+      await stu.save();
+      await User.create(user);
 
       res.status(200).send({
         status: "success",
@@ -551,15 +221,12 @@ const sendCredentials = async(req,res) =>{
 
 const sendMeetInvite = async(req, res) =>{
   const {data, time, venue, date} = req.body;
-  console.log(req.body);
   for(let i = 0; i<data.length; i++)
   {
       const user = await Student.findOne({_id: data[i]});
-      console.log(user);
       if(user){
 
         const sendMail = await sendInteractionInvite(user.email, date, time, venue, data[i]);
-        console.log(sendMail);
         if(!sendMail.error)
         {
           user.mailSent = true;
@@ -580,6 +247,138 @@ const sendMeetInvite = async(req, res) =>{
   })
 }
 
+const raiseObjection = async (req, res) => {
+  const { studentId } = req.params;
+  const objectionText = req.body.obj;
+  
+  try {
+    await StudentRegDetails.findByIdAndUpdate(
+      studentId,
+      { 
+        $push: { objections: objectionText },
+        $set: { flag: true, depApproved: false, duiApproved: false}, 
+      },
+      { new: true }
+    );
+    res.status(200).send('Objection text added successfully!');
+  } catch (error) {
+    console.error('Error updating objections:', error);
+    res.status(500).send('Error updating objections');
+  }
+};
 
-module.exports = { Signup, Login, AuthController, ForgotPassword, verifyOtp, ResetPassword, AddDepartment, sendCredentials, sendMeetInvite };
+const getObjections = async (req, res) => {
+  const { studentId } = req.params;
+  try {
+    const data = await StudentRegDetails.findOne({ _id: studentId });
+    if (!data) {
+      return res.status(404).json({ message: "Objections not found for this student" });
+    }
+    return res.status(200).json({ data });
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching objections", error: error.message });
+  }
+};
+
+const removeObjection = async (req, res) => {
+  const { studentId } = req.params;
+  const objectionText = req.body.obj;
+  try {
+    await StudentRegDetails.findByIdAndUpdate(
+      studentId,
+      { 
+        $pull: { objections: objectionText },
+      },
+      { new: true }
+    );
+
+    const data = await StudentRegDetails.findOne({ _id: studentId });
+    const flagVal = (data.objections.length !== 0);
+    await StudentRegDetails.findByIdAndUpdate(
+      studentId,
+      { 
+        $set: { flag: flagVal },
+      },
+      { new: true }
+    );
+    res.status(200).send('Objection text removed successfully!');
+  } catch (error) {
+    console.error('Error removing objections:', error);
+    res.status(500).send('Error removing objections');
+  }
+};
+
+const approveDui = async (req, res) => {
+  const { studentId } = req.params;
+  
+  try {
+    await StudentRegDetails.findByIdAndUpdate(
+      studentId,
+      { 
+        $set: { duiApproved: true }, 
+      },
+      { new: true }
+    );
+    res.status(200).send('Approved!');
+  } catch (error) {
+    res.status(500).send('Error');
+  }
+};
+
+const feeRequest = async(req,res) =>{
+  console.log(req.body);
+  try {
+    const student = await Student.findOne({_id: req.body.id});
+    const regDetails = await StudentRegDetails.findOne({_id: req.body.id});
+
+    console.log(student, regDetails);
+    if(regDetails.enrollmentNumber.length === 0) {
+      const rns = await Admin.findOne({user: "rns"});
+      await Admin.findByIdAndUpdate(
+        rns._id,
+        { 
+          $set: { num: rns.num + 1 },
+        },
+        { new: true }
+      );
+      const updatedRns = await Admin.findOne({user: "rns"});
+      const enrollmentNumber = 100000 + updatedRns.num;
+
+      await StudentRegDetails.findByIdAndUpdate(
+        student._id,
+        { 
+          $set: { enrollmentNumber: enrollmentNumber.toString() },
+        },
+        { new: true }
+      );
+    }
+
+    if(!student || !regDetails){
+      return res.status(200).send({
+        error: true,
+        message: "error finding student",
+      })
+    }
+
+    const dep = await Department.findOne({_id: student.department});
+    const updatedReg = await StudentRegDetails.findOne({_id: req.body.id});
+
+    const sendRequest = await sendFeeRequest(student.email, student.firstName, updatedReg.enrollmentNumber, dep.depName, student._id);
+
+    res.status(200).send({
+      status: "success",
+      message: "Request sent successfully",
+    })
+
+    if (sendRequest.error) {
+      return res.status(500).send({
+        error: true,
+        message: "Couldn't send request email.",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+module.exports = { AuthController, AddDepartment, sendCredentials, sendMeetInvite, raiseObjection, getObjections, removeObjection, approveDui, feeRequest };
   

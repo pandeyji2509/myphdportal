@@ -6,6 +6,7 @@ import FormPage from "../components/landingpage/registration/formPage";
 import NoticePage from "../components/landingpage/notice/NoticePage";
 import { Routes, Route } from "react-router-dom";
 import Success from "../components/landingpage/home/success";
+import FeeUpload from "../components/landingpage/feeupload";
 
 
 function LandingPage() {
@@ -16,6 +17,7 @@ function LandingPage() {
             <Route path="/" element = {<Home />} />
             <Route path="/form" element = {<FormPage />} />
             <Route path="/notice" element = {<NoticePage />} />
+            <Route path="/feeupload" element = {< FeeUpload />} />
             <Route path="/success" element = {<Success />} />
           </Routes>
 

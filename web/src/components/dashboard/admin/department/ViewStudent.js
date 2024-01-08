@@ -1,36 +1,16 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Accordion, AccordionHeader, AccordionBody, select } from '@material-tailwind/react';
+import { Accordion, AccordionHeader, AccordionBody } from '@material-tailwind/react';
 import { FaSave, FaFilePdf } from 'react-icons/fa';
 import { FcApprove } from 'react-icons/fc';
-import { BsFillSendCheckFill } from 'react-icons/bs';
 import { BiSolidCloudUpload } from "react-icons/bi";
 import axios from 'axios';
 import {message} from 'antd';
-import { useAppContext } from '../../../context/context';
-import { personal, master, academic, other } from '../../../constants/viewStudentData';
+import { useAppContext } from '../../../../context/context';
+import { personal, master, academic, other } from '../../../../constants/viewStudentData';
 import { jsPDF } from "jspdf";
-// import AppContext from 'antd/es/app/context';
-
-
-function Icon({ id, open }) {
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className={`${
-          id === open ? 'rotate-180' : ''
-        } h-5 w-5 transition-transform`}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-      </svg>
-    );
-  }
-
+import { Icon } from '../icon';
 
 const ScoreRow = ({ label, value, onChange, disabled, text, stu }) => (
   <div className="flex py-2">
@@ -52,11 +32,12 @@ const ViewStudent = () => {
   const student = useSelector((state) => state.student);
   const stu = student.student;
 
-  // Initialize studentScores state with data fetched from backend
   const [studentScores, setStudentScores] = useState(null);
+  const [objection, setObjection] = useState(null);
   const [viewlink, setlink] = useState(null);
   useEffect(() => {
     fetchStudentScores();
+    fetchObjections();
   }, []);
 
   const fetchStudentScores = async () => {
@@ -70,15 +51,36 @@ const ViewStudent = () => {
     }
   };
 
+  const fetchObjections = async () => {
+    try {
+      const {data} = await axios.get(
+        `${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/getObjections/${stu._id}`
+      );
+      setObjection(data.data.objections);
+    } catch (error) {
+      console.error('Error fetching objections:', error);
+    }
+  };
+
+  const removeObjection = async (objectionText) => {
+    console.log(objectionText);
+    try {
+      await axios.put(
+        `${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/removeObj/${stu._id}`, { obj : objectionText }
+      );
+      message.success("Objection Deleted!");
+      fetchObjections();
+    } catch (error) {
+      console.error('Error :', error);
+    } 
+  };
+
   const viewLink = async (id) => {
     try {
-      console.log(id);
       const { data } = await axios.post(
-        `${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/student/viewfile`,
-        {id : id}
+        `${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/student/viewfile`, {id : id}
       );
       window.open(data.filelink, '_blank');
-      console.log("Link ", data.filelink);
     } catch (error) {
       console.error('Error fetching link:', error);
     }
@@ -96,7 +98,6 @@ const ViewStudent = () => {
     console.log(selectedFiles);
 
     try {
-      console.log(process.env.REACT_APP_SERVER_ENDPOINT);
       const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/uploadMoM`, 
         {email : stu.email, mom : files[0]}, 
         {
@@ -104,10 +105,6 @@ const ViewStudent = () => {
             "content-type": "multipart/form-data",
         },
       });
-      console.log(res);
-      if (res.status === 200) {
-        console.log("yaa")
-      }
     } catch (error) {
       console.log(error);
     }
@@ -118,7 +115,6 @@ const ViewStudent = () => {
   };
 
   const calculateOverallMarks = () => {
-    // Calculate overallMarks from the studentScores object if it exists
     const { bsc, msc, scholarship, proposal, interaction } = studentScores || {};
     const overallMarks =
       parseFloat(bsc || 0) + parseFloat(msc || 0) + parseFloat(scholarship || 0) + parseFloat(proposal || 0) + parseFloat(interaction || 0);
@@ -200,7 +196,8 @@ const ViewStudent = () => {
       studentScores.isEligibilityTestApproved &&
       studentScores.isMigrationApproved &&
       studentScores.isNOCApproved &&
-      studentScores.isScholarshipApproved
+      studentScores.isScholarshipApproved &&
+      studentScores.isFeeUploaded
     );
   };
 
@@ -234,7 +231,6 @@ const ViewStudent = () => {
       finalApproval: true,
     }));
     setFinalApprovalTriggered(true);
-    console.log(studentScores);
     // Handle the submit to save changes
   };
 
@@ -308,6 +304,24 @@ const ViewStudent = () => {
     // Save the PDF or open it in a new tab
     doc.save(name);
   };
+
+
+  const handleFeeRequest = async() =>{
+    console.log("in here");
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/v1/admin/feeRequest`,
+        {id: stu._id},
+      );
+      if(res.data.error)
+      {
+        message.error("Error sending request");
+      } else {
+        message.success("Request sent successfully");
+      }
+    } catch (error) {
+      console.log(error)
+    } 
+  }
 
   return (
     <div className="px-8 py-4">
@@ -402,6 +416,7 @@ const ViewStudent = () => {
             <div className='bg-gray-100 p-2 rounded-md font-medium text-lg my-4 text-gray-500 flex'>
               <div className="w-1/2">Uploaded Documents</div>
             </div>
+
             <div className="flex py-1 font-medium">
               <div className="w-3/4 text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.dmc)}>1. Master's Degree / DMC</div>
               <div className="w-1/4 flex justify-end">
@@ -459,7 +474,7 @@ const ViewStudent = () => {
               </div>
             </div>
             <div className="flex py-1 font-medium">
-              <div className="w-3/4 text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.scholarship)}>4. Scholarship Proof</div>
+              <div className="w-3/4 text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.scholarship)}>5. Scholarship Proof</div>
               <div className="w-1/4 flex justify-end">
               <input
                 name="isScholarshipApproved"
@@ -472,9 +487,28 @@ const ViewStudent = () => {
                 <div className='text-sm items-center flex mr-2'>Approve</div>
               </div>
             </div>
+            <div className="flex py-1 font-medium">
+              <div className="w-3/4 text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.fee)}>6. Fee Receipt</div>
+              <div className="w-1/4 flex justify-end">
+              <input
+                name="isFeeUploaded"
+                type="checkbox"
+                className="mr-2"
+                checked={studentScores ? studentScores.isFeeUploaded : false}
+                onChange={(e) => handleApprovalChange('isFeeUploaded', e.target.checked)}
+                disabled = {stu.isApproved}
+              />
+                <div className='text-sm items-center flex mr-2'>Approve</div>
+              </div>
+            </div>
         </div>
 
        </div>
+
+
+        {/* Second Column */}
+
+
         <div className="w-1/4 ml-4">
             <div className="bg-white shadow-md h-fit rounded-md">
                 <h2 className="text-xl font-bold px-4 py-3">Scores</h2>
@@ -492,7 +526,7 @@ const ViewStudent = () => {
             </div>
             <div
               className={`shadow-md my-4 px-4 py-2 font-semibold text-white rounded-md flex ${
-                (saveButtonDisabled || stu.isApproved)
+                (saveButtonDisabled || stu.depApproved)
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
               }`}
@@ -505,7 +539,7 @@ const ViewStudent = () => {
               </div>
             </div>
             <div className={`shadow-md my-4 px-4 py-2 font-semibold text-white rounded-md flex ${
-                stu.isApproved
+                stu.depApproved
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#4CAF50] hover:bg-[#3a873d] cursor-pointer"
               }`}
@@ -513,6 +547,13 @@ const ViewStudent = () => {
                 <div className="w-5/6 text-sm">Save & Approve</div>
                 <div className="w-1/6 text-lg justify-end flex"><FcApprove /></div>
             </div>
+
+            <div className={`shadow-md my-4 px-4 py-2 font-semibold text-white rounded-md flex bg-blue-500 hover:bg-blue-600 cursor-pointer`}
+              onClick={handleFeeRequest}>
+                <div className="w-5/6 text-sm">Request Fee Upload</div>
+                <div className="w-1/6 text-lg justify-end flex"><BiSolidCloudUpload /></div>
+            </div>
+
             <div className={`shadow-md my-4 px-4 py-2 font-semibold text-white rounded-md flex bg-red-500 hover:bg-red-600 cursor-pointer`} onClick = {generatePDF}>
                 <div className="w-5/6 text-sm">Generate Scorecard</div>
                 <div className="w-1/6 text-lg justify-end flex"><FaFilePdf /></div>
@@ -532,6 +573,21 @@ const ViewStudent = () => {
                 <div className="w-5/6 text-sm">
                   {` ${ selectedFiles ? "Signed Copy Attached" : "Attach Signed Copy"}`}</div>
                 <div className="w-1/6 text-xl justify-end flex"><BiSolidCloudUpload /></div>
+            </div>
+            <div className="bg-white shadow-md h-fit rounded-md pb-2">
+                <h2 className="text-md font-bold px-4 py-3">Notice</h2>
+                <div className="border-b border-gray-30"></div>
+
+                {objection && (
+                  <div>
+                    {objection.map((objection, index) => (
+                      <div key={index} className='flex items-center my-2 px-2 text-sm'>
+                        <div className='rounded-full bg-red h-4 w-4 items-center flex justify-center text-xs text-white font-semibold bg-red-700 mr-2 hover:bg-red-600 hover:cursor-pointer' onClick={() => removeObjection(objection)}>X</div>
+                        {objection}
+                      </div>
+                    ))}
+                  </div>
+                )}
             </div>
         </div>
         

@@ -1,22 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import NoticeBoard from "../notice/noticeBoard";
 import Instructions from './instructions';
-import AdminLogin from '../login/AdminLogin';
+import Login from '../login/Login';
 import Announcement from "./announcement";
-import StudentLogin from "../login/StudentLogin";
 
-import { Link } from "react-router-dom";
 const Home = () => {
-    const [showStudentLogin, setShowStudentLogin] = useState(true);
-
-    const handleStudentClick = () => {
-        setShowStudentLogin(true);
-    };
-
-    const handleAdminClick = () => {
-        setShowStudentLogin(false);
-    };
-
     return (
     <div className="font-['IBM_Plex_Sans'] flex flex-grow h-[88vh] bg-[#f8f4fc]">
 
@@ -42,11 +30,7 @@ const Home = () => {
         <div className={`w-4/12 bg-cover overflow-y-auto bg-center relative bg-[url('../public/gandhibhawan.jpg')]`}>
             <div className="bg-black/[.5] h-full w-full absolute"></div>
             <div className={`py-10 px-20 relative z-10`}>
-            {showStudentLogin ? (
-            <StudentLogin onAdminClick={handleAdminClick}/>
-            ) : (
-            <AdminLogin onStudentClick={handleStudentClick}/>
-            )}
+                <Login />
             </div>
         </div>
     </div>

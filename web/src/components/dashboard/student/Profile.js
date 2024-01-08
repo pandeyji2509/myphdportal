@@ -18,7 +18,7 @@ const Profile = () => {
                     <StudentDetail heading={"Department"} text={data.department} />
                     <StudentDetail heading={"Subject"} text={data.subject} />
                     <StudentDetail heading={"Faculty"} text={data.faculty} />
-                    <StudentDetail heading={"Mobile Number"} text={data.mobileNumber} />
+                    <StudentDetail heading={"Mobile Number"} text={data.mobile} />
                     <StudentDetail heading={"E-Mail ID"} text={data.email} />
                 </div>
                 <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-white  shadow-md"} h-fit w-3/5 rounded-md pb-4`}>
