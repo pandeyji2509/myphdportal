@@ -1,8 +1,8 @@
 import React from "react";
-import NoticeBoard from "../notice/noticeBoard";
 import Instructions from './instructions';
 import Login from '../login/Login';
 import Announcement from "./announcement";
+import NoticePage from "../notice/NoticePage";
 
 const Home = () => {
     return (
@@ -16,7 +16,7 @@ const Home = () => {
                 <div className="w-2/5 mr-4 h-full">
                     <div className="h-[10%] font-semibold items-center flex text-lg rounded-t-md px-4   bg-white border-b-2">Public Notice</div>
                     <div className="h-[90%] overflow-y-scroll text-gray-600 bg-white font-medium rounded-md shadow-sm pb-4 text-sm"> 
-                        <NoticeBoard />
+                        <NoticePage />
                     </div>
                 </div>
                 

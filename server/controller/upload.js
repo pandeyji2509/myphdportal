@@ -143,6 +143,7 @@ const uploadFiles = async (req, res) => {
       masterSubject: req.body.masterSubject,
       masterRollNo: req.body.masterRollNo,
 
+      enrollmentNumber: "",
       eligibilityTest: req.body.eligibilityTest,
       regNumber: req.body.regNumber,
       researchDep: req.body.researchDep,
