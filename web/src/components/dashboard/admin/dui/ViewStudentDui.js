@@ -209,6 +209,9 @@ const ViewStudentDui = () => {
             <div className="flex py-1 font-medium">
             <div className="w-full text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.scholarship)}>4. Scholarship Proof</div>
             </div>
+            <div className="flex py-1 font-medium">
+            <div className="w-full text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.photo)}>5. Candidate's Photo</div>
+            </div>
         </div>
 
        </div>

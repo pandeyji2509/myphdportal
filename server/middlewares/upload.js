@@ -9,7 +9,7 @@ var storage = new GridFsStorage({
   url: dbConfig.url + dbConfig.database,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
-    const match = ["image/png", "image/jpeg", "application/pdf"];
+    const match = ["image/png","image/jpg", "image/jpeg", "application/pdf"];
 
     if (match.indexOf(file.mimetype) === -1) {
       const filename = `${Date.now()}-bezkoder-${file.originalname}`;
@@ -42,6 +42,10 @@ var uploadFiles = multer({ storage: storage }).fields([
   },
   {
     name: "scholarship",
+    maxCount: 1,
+  },
+  {
+    name: "photo",
     maxCount: 1,
   },
 ]);

@@ -7,7 +7,7 @@ const { generateJwt } = require("../utils/generateJwt");
 const { hashPassword, comparePassword } = require("../utils/bycrpt");
 const { createUser, updateUser } = require("../services/user");
 
-const log_in = async (body, User, res) => {
+const  log_in = async (body, User, res) => {
     try {
       console.log(req.body);
   

@@ -9,8 +9,10 @@ const Greeting = () => {
     const {user} = useSelector(state => state.user);
     var Name = "Student";
     if(user){
+        console.log("user",user);
         Name = user.firstName + " " + user.lastName;
     }
+    console.log("user",user);
     useEffect(() => {
         const now = new Date();
         const currentHour = now.getHours();

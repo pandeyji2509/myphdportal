@@ -62,7 +62,7 @@ const Approved = () => {
     });
   
     // Close the popup and clear the selected items
-    setShowPopup(false);
+     setShowPopup(false);
     setSelectedItems([]);
   };
   

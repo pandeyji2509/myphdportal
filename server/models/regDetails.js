@@ -33,6 +33,7 @@ const StudentRegDetailsSchema = new Schema(
     eligibility: String,
     dmc: String,
     scholarship: String,
+    photo: String,
     mom: String,
     fee: String,
   },

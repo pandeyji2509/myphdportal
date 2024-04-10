@@ -197,6 +197,7 @@ const ViewStudent = () => {
       studentScores.isMigrationApproved &&
       studentScores.isNOCApproved &&
       studentScores.isScholarshipApproved &&
+      studentScores.isPhotoApproved &&
       studentScores.isFeeUploaded
     );
   };
@@ -231,7 +232,7 @@ const ViewStudent = () => {
       finalApproval: true,
     }));
     setFinalApprovalTriggered(true);
-    // Handle the submit to save changes
+    // Handle the  submit to save changes
   };
 
   const generatePDF = () => {
@@ -488,7 +489,21 @@ const ViewStudent = () => {
               </div>
             </div>
             <div className="flex py-1 font-medium">
-              <div className="w-3/4 text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.fee)}>6. Fee Receipt</div>
+              <div className="w-3/4 text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.photo)}>6. Candidate's photo </div>
+              <div className="w-1/4 flex justify-end">
+              <input
+                name="isPhotoApproved"
+                type="checkbox"
+                className="mr-2"
+                checked={studentScores ? studentScores.isPhotoApproved : false}
+                onChange={(e) => handleApprovalChange('isPhotoApproved', e.target.checked)}
+                disabled = {stu.isApproved}
+              />
+                <div className='text-sm items-center flex mr-2'>Approve</div>
+              </div>
+            </div>
+            <div className="flex py-1 font-medium">
+              <div className="w-3/4 text-blue-700 font-semibold hover:underline cursor-pointer" onClick={() => viewLink(stu.fee)}>7. Fee Receipt</div>
               <div className="w-1/4 flex justify-end">
               <input
                 name="isFeeUploaded"

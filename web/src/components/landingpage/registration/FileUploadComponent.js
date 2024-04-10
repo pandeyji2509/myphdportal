@@ -60,6 +60,12 @@ const FileUploadComponent = ({ formik }) => {
           <FileUpload formik={formik} label="scholarship" />
         </AccordionBody>
       </Accordion>
+      <Accordion open={open === 6} icon={<Icon id={6} open={open} />} className="bg-white">
+        <AccordionHeader onClick={() => handleOpen(6)}>Photograph of candidate</AccordionHeader>
+        <AccordionBody>
+          <FileUpload formik={formik} label="photo" />
+        </AccordionBody>
+      </Accordion>
     </Fragment>
   );
 };

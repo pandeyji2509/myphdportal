@@ -8,6 +8,7 @@ const Profile = () => {
     var data = null;
     if(user){
         data = user;
+        console.log("data",data);
     }
     return ( 
         <div className='p-8'>

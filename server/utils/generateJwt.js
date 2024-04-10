@@ -9,8 +9,8 @@ async function generateJwt(emailId, userId, expiryTime, secret) {
     const payload = { email: emailId, id: userId };
     const token = jwt.sign(payload, secret, options);
     return token;
-  } catch (error) {
-    console.log(error);
+  } catch (error) { 
+    console.log(error); 
   }
 }
 

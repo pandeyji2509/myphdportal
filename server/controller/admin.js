@@ -12,8 +12,8 @@ const Admin = require("../models/admin");
 const StudentRegDetails = require("../models/regDetails");
   
 const AuthController = async (req, res) => {
-  try {
-      const user = await User.findById({ _id: req.body.userId });
+  try { 
+      const  user = await User.findById({ _id: req.body.userId });
       user.password = undefined;
 
       if (!user) {

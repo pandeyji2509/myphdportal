@@ -62,7 +62,7 @@ function Form() {
   const registerUser = async (body) => {
     setLoading(true);
     try {
-      console.log(process.env.REACT_APP_SERVER_ENDPOINT);
+      console.log("hii",process.env.REACT_APP_SERVER_ENDPOINT);
       const res = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/upload`, body, {
         headers: {
           "content-type": "multipart/form-data",
@@ -130,6 +130,7 @@ function Form() {
       noc: "",
       eligibility: "",
       scholarship: "",
+      photo:"",
     },
     validationSchema: Yup.object().shape({
       email: Yup.string().email('Invalid email address').required('Required'),

@@ -298,7 +298,6 @@ const renderStudentDetailsToPDF = (doc, student) => {
             handleDateChange={handleDateChange}
             handleTimeChange={handleTimeChange}
             handleVenueChange={handleVenueChange}/>)}
-
     </>
   );
 };

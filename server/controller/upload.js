@@ -155,6 +155,7 @@ const uploadFiles = async (req, res) => {
       eligibility: file.eligibility[0].id,
       migration: file.migration[0].id,
       scholarship: file.scholarship[0].id,
+      photo: file.photo[0].id
     };
 
     const regdetailsObj = await StudentRegDetails.create(regdetailsData);
