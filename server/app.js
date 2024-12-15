@@ -30,9 +30,12 @@ mongoose
   });
 
 const app = express();
-
+const path=require("path");
 app.use(cors(corsOptions));
 app.use(express.json());
+const _dirname=path.dirname("");
+const buildpath=path.join(_dirname,"../web/build");
+app.use(express.static(buildpath));
 app.use("/api/v1/student", studentRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/stats", stats);

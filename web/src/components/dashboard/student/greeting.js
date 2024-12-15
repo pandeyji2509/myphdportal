@@ -70,8 +70,7 @@ const Greeting = () => {
                     <div className='flex'>
                       <p className='font-bold mb-4'> Department: </p>
                       <p className='ml-2'> {student?student[0].department:""}</p>
-                    </div>
-                    
+                    </div>                   
                         {student? <img className="ml-auto" src={stuImg} alt="student" width="100" height="100"/>:""}
                     </div>
         </div>)

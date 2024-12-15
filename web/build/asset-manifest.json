@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.78a9b1d0.css",
+    "main.js": "/static/js/main.45f7fc46.js",
+    "static/js/498.0a559388.chunk.js": "/static/js/498.0a559388.chunk.js",
+    "static/js/703.25a23d83.chunk.js": "/static/js/703.25a23d83.chunk.js",
+    "static/js/513.f75e98e0.chunk.js": "/static/js/513.f75e98e0.chunk.js",
+    "static/media/otp.png": "/static/media/otp.541b64db97cfc2385be7.png",
+    "static/media/profile.png": "/static/media/profile.c3d5bf03ea9811eff085.png",
+    "static/media/mailsent.png": "/static/media/mailsent.299eb17a0843b3fcac82.png",
+    "static/media/pu-logodark.png": "/static/media/pu-logodark.92a638704de00505a64b.png",
+    "static/media/gandhibhawan.jpg": "/static/media/gandhibhawan.ae2850aa507c95005241.jpg",
+    "index.html": "/index.html",
+    "main.78a9b1d0.css.map": "/static/css/main.78a9b1d0.css.map",
+    "main.45f7fc46.js.map": "/static/js/main.45f7fc46.js.map",
+    "498.0a559388.chunk.js.map": "/static/js/498.0a559388.chunk.js.map",
+    "703.25a23d83.chunk.js.map": "/static/js/703.25a23d83.chunk.js.map",
+    "513.f75e98e0.chunk.js.map": "/static/js/513.f75e98e0.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.78a9b1d0.css",
+    "static/js/main.45f7fc46.js"
+  ]
+}

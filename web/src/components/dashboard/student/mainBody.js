@@ -15,9 +15,7 @@ const MainBody = ({ onAddNew }) => {
             </div>
             <div className="h-fit w-1/2">
                 <NoticeBoard />
-            </div>
-            
-            
+            </div> 
         </div> 
      );
 }
